@@ -8,6 +8,8 @@ const path = require('path');
 const request = require('request');
 
 const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 const PORT = 5975;
 const { clientId, bearer } = require('./clientId');
 assert(clientId, 'Error: missing configuration file');
@@ -15,7 +17,7 @@ assert(clientId, 'Error: missing configuration file');
 app.use(express.static(path.join(__dirname, '../client')));
 
 const OVERWATCH_GAME_ID = 488552;
-const REFRESH_RATE = 60000;
+const REFRESH_RATE = 15000;
 const heros = [];
 
 /**
@@ -47,8 +49,8 @@ const usersRequest = {
   },
 };
 
+let streamsByHero;
 function getMetadata() {
-  // let streamsByHero;
   let streamsWithHeros;
   async.waterfall([
     cb => {
@@ -60,10 +62,6 @@ function getMetadata() {
       streamsWithHeros = _.filter(streams, stream => {
         return _.has(stream, 'overwatch.broadcaster.hero.name');
       });
-      // Dont calculate streams by hero here. Not necessary.
-      // streamsByHero = _.groupBy(streamsWithHeros, stream => {
-      //   return _.get(stream, 'overwatch.broadcaster.hero.name');
-      // });
       const usersRequestOpts = _.merge({}, usersRequest, {
         qs: {
           id: _.map(streamsWithHeros, 'user_id'),
@@ -78,22 +76,24 @@ function getMetadata() {
         return _.extend({}, stream, streamsByUserId[stream.user_id]);
       });
       // console.dir(_.first(mergedStreamData), { depth: null });
-      const streamsByHero = _.groupBy(mergedStreamData, stream => {
+      streamsByHero = _.groupBy(mergedStreamData, stream => {
         const hero = _.get(stream, 'overwatch.broadcaster.hero.name');
         return hero;
       });
-      console.log('streamsByHero', streamsByHero);
+      io.sockets.emit('streams', streamsByHero);
     },
   ]);
 }
+
 getMetadata();
 setInterval(getMetadata, REFRESH_RATE);
 
-app.get('/', function (req, res) {
-    res.send('Hello World')
+io.on('connection', socket => {
+  // Add the socket to list of all sockets. Wait do you need this list? Nah...just broadcast periodically
+  socket.emit('streams', streamsByHero);
 });
 
-app.listen(PORT);
+server.listen(PORT);
 
 // todo (frontend): allow frontend to choose whether or not to auto-switch.
 // Also the backend should pass to the frontend a full list of streams for the hero
