@@ -1,4 +1,12 @@
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hero Streamer</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- TODO: dont actually require babel lol -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+  </head>
   <body>
     <!-- Add a placeholder for the Twitch embed -->
     <div id="twitch-embed"></div>
@@ -6,13 +14,24 @@
     <!-- Load the Twitch embed script -->
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
 
-    <!-- Create a Twitch.Embed object that will render within the "twitch-embed" root element. -->
-    <script type="text/javascript">
-      new Twitch.Embed("twitch-embed", {
-        width: 854,
-        height: 480,
-        channel: "monstercat"
-      });
-    </script>
+    <div id="root"></div>
+    <script type="text/babel" src="./src/app.js">
+  </body>
+</html>
+<!DOCTYPE html>
+<html>
+  <body>
+    <!--
+      Note: this page is a great way to try React but it's not suitable for production.
+      It slowly compiles JSX with Babel in the browser and uses a large development build of React.
+
+      To set up a production-ready React build environment, follow these instructions:
+      * https://reactjs.org/docs/add-react-to-a-new-app.html
+      * https://reactjs.org/docs/add-react-to-an-existing-app.html
+
+      You can also use React without JSX, in which case you can remove Babel:
+      * https://reactjs.org/docs/react-without-jsx.html
+      * https://reactjs.org/docs/cdn-links.html
+    -->
   </body>
 </html>
