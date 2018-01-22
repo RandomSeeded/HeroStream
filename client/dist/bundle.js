@@ -2025,9 +2025,9 @@ var _ = _interopRequireWildcard(_lodash);
 
 var _reactRouterDom = __webpack_require__(32);
 
-var _reactTwitchEmbedVideo = __webpack_require__(63);
+var _ReactTwitchEmbedVideo = __webpack_require__(63);
 
-var _reactTwitchEmbedVideo2 = _interopRequireDefault(_reactTwitchEmbedVideo);
+var _ReactTwitchEmbedVideo2 = _interopRequireDefault(_ReactTwitchEmbedVideo);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2144,8 +2144,8 @@ var HEROS = [{
 }];
 
 var streams = void 0;
-var currentStream = void 0; // { hero, channel }
 var twitchEmbed = void 0;
+
 socket.on('streams', function (data) {
   console.log('data', data);
   streams = data;
@@ -2158,15 +2158,10 @@ socket.on('streams', function (data) {
 var TwitchEmbed = function (_React$Component) {
   _inherits(TwitchEmbed, _React$Component);
 
-  function TwitchEmbed(props) {
+  function TwitchEmbed() {
     _classCallCheck(this, TwitchEmbed);
 
-    var _this = _possibleConstructorReturn(this, (TwitchEmbed.__proto__ || Object.getPrototypeOf(TwitchEmbed)).call(this, props));
-
-    _this.state = {
-      channel: props.channel
-    };
-    return _this;
+    return _possibleConstructorReturn(this, (TwitchEmbed.__proto__ || Object.getPrototypeOf(TwitchEmbed)).apply(this, arguments));
   }
 
   _createClass(TwitchEmbed, [{
@@ -2176,7 +2171,12 @@ var TwitchEmbed = function (_React$Component) {
       return React.createElement(
         'div',
         null,
-        React.createElement(_reactTwitchEmbedVideo2.default, { channel: this.state.channel })
+        React.createElement(
+          'p',
+          null,
+          this.props.channel
+        ),
+        React.createElement(_ReactTwitchEmbedVideo2.default, { channel: this.props.channel })
       );
     }
   }]);
@@ -2184,16 +2184,51 @@ var TwitchEmbed = function (_React$Component) {
   return TwitchEmbed;
 }(React.Component);
 
+var hackyThing = 0;
+
 var HeroStream = function (_React$Component2) {
   _inherits(HeroStream, _React$Component2);
+
+  _createClass(HeroStream, [{
+    key: 'getChannel',
+    value: function getChannel(heroName) {
+      var channelMetadata = _.first(streams[heroName]);
+      return _.get(channelMetadata, 'login', 'monstercat');
+    }
+  }, {
+    key: 'updateStream',
+    value: function updateStream() {
+      var streamersForThisHero = _.map(streams[this.state.heroName], 'login');
+      if (!_.includes(streamersForThisHero, this.state.channel)) {
+        var channel = this.getChannel(this.state.heroName);
+        this.setState({ channel: channel });
+      }
+    }
+  }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _this3 = this;
+
+      this.interval = setInterval(function () {
+        return _this3.updateStream();
+      }, 3000);
+    }
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      clearInterval(this.interval);
+    }
+  }]);
 
   function HeroStream(props) {
     _classCallCheck(this, HeroStream);
 
     var _this2 = _possibleConstructorReturn(this, (HeroStream.__proto__ || Object.getPrototypeOf(HeroStream)).call(this, props));
 
+    var channel = _this2.getChannel(props.heroName);
     _this2.state = {
-      heroName: props.heroName
+      heroName: props.heroName,
+      channel: channel
     };
     return _this2;
   }
@@ -2201,9 +2236,7 @@ var HeroStream = function (_React$Component2) {
   _createClass(HeroStream, [{
     key: 'render',
     value: function render() {
-      var channelMetadata = _.first(streams[this.state.heroName]);
-      var channel = _.get(channelMetadata, 'login', 'monstercat');
-      return React.createElement(TwitchEmbed, { channel: channel });
+      return React.createElement(TwitchEmbed, { channel: this.state.channel, key: this.state.channel });
     }
   }]);
 
@@ -24551,40 +24584,146 @@ module.exports = function hoistNonReactStatics(targetComponent, sourceComponent,
 /* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(64);
-__webpack_require__(65);
-module.exports = __webpack_require__(66).default;
+"use strict";
 
-/***/ }),
-/* 64 */
-/***/ (function(module, exports) {
 
-!function(e){function r(t){if(n[t])return n[t].exports;var o=n[t]={i:t,l:!1,exports:{}};return e[t].call(o.exports,o,o.exports,r),o.l=!0,o.exports}var t=window.webpackJsonpreact_twitch_embed_video;window.webpackJsonpreact_twitch_embed_video=function(n,c,i){for(var a,u,f,l=0,s=[];l<n.length;l++)u=n[l],o[u]&&s.push(o[u][0]),o[u]=0;for(a in c)Object.prototype.hasOwnProperty.call(c,a)&&(e[a]=c[a]);for(t&&t(n,c,i);s.length;)s.shift()();if(i)for(l=0;l<i.length;l++)f=r(r.s=i[l]);return f};var n={},o={2:0};r.e=function(e){function t(){a.onerror=a.onload=null,clearTimeout(u);var r=o[e];0!==r&&(r&&r[1](new Error("Loading chunk "+e+" failed.")),o[e]=void 0)}var n=o[e];if(0===n)return new Promise(function(e){e()});if(n)return n[2];var c=new Promise(function(r,t){n=o[e]=[r,t]});n[2]=c;var i=document.getElementsByTagName("head")[0],a=document.createElement("script");a.type="text/javascript",a.charset="utf-8",a.async=!0,a.timeout=12e4,r.nc&&a.setAttribute("nonce",r.nc),a.src=r.p+""+e+".js";var u=setTimeout(t,12e4);return a.onerror=a.onload=t,i.appendChild(a),c},r.m=e,r.c=n,r.d=function(e,t,n){r.o(e,t)||Object.defineProperty(e,t,{configurable:!1,enumerable:!0,get:n})},r.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(t,"a",t),t},r.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)},r.p="",r.oe=function(e){throw console.error(e),e}}([]);
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
-/***/ }),
-/* 65 */
-/***/ (function(module, exports) {
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-webpackJsonpreact_twitch_embed_video([0],[function(e,t,n){"use strict";function r(e){return function(){return e}}var o=function(){};o.thatReturns=r,o.thatReturnsFalse=r(!1),o.thatReturnsTrue=r(!0),o.thatReturnsNull=r(null),o.thatReturnsThis=function(){return this},o.thatReturnsArgument=function(e){return e},e.exports=o},,function(e,t,n){"use strict";e.exports=n(3)},function(e,t,n){"use strict";function r(e){for(var t=arguments.length-1,n="Minified React error #"+e+"; visit http://facebook.github.io/react/docs/error-decoder.html?invariant="+e,r=0;r<t;r++)n+="&args[]="+encodeURIComponent(arguments[r+1]);throw t=Error(n+" for the full message or use the non-minified dev environment for full errors and additional helpful warnings."),t.name="Invariant Violation",t.framesToPop=1,t}function o(e,t,n){this.props=e,this.context=t,this.refs=g,this.updater=n||x}function u(e,t,n){this.props=e,this.context=t,this.refs=g,this.updater=n||x}function i(){}function c(e,t,n){this.props=e,this.context=t,this.refs=g,this.updater=n||x}function a(e,t,n){var r,o={},u=null,i=null;if(null!=t)for(r in void 0!==t.ref&&(i=t.ref),void 0!==t.key&&(u=""+t.key),t)C.call(t,r)&&!$.hasOwnProperty(r)&&(o[r]=t[r]);var c=arguments.length-2;if(1===c)o.children=n;else if(1<c){for(var a=Array(c),l=0;l<c;l++)a[l]=arguments[l+2];o.children=a}if(e&&e.defaultProps)for(r in c=e.defaultProps)void 0===o[r]&&(o[r]=c[r]);return{$$typeof:k,type:e,key:u,ref:i,props:o,_owner:A.current}}function l(e){return"object"==typeof e&&null!==e&&e.$$typeof===k}function f(e){var t={"=":"=0",":":"=2"};return"$"+(""+e).replace(/[=:]/g,function(e){return t[e]})}function s(e,t,n,r){if(U.length){var o=U.pop();return o.result=e,o.keyPrefix=t,o.func=n,o.context=r,o.count=0,o}return{result:e,keyPrefix:t,func:n,context:r,count:0}}function p(e){e.result=null,e.keyPrefix=null,e.func=null,e.context=null,e.count=0,10>U.length&&U.push(e)}function y(e,t,n,o){var u=typeof e;"undefined"!==u&&"boolean"!==u||(e=null);var i=!1;if(null===e)i=!0;else switch(u){case"string":case"number":i=!0;break;case"object":switch(e.$$typeof){case k:case j:case w:case S:i=!0}}if(i)return n(o,e,""===t?"."+h(e,0):t),1;if(i=0,t=""===t?".":t+":",Array.isArray(e))for(var c=0;c<e.length;c++){u=e[c];var a=t+h(u,c);i+=y(u,a,n,o)}else if(null===e||void 0===e?a=null:(a=R&&e[R]||e["@@iterator"],a="function"==typeof a?a:null),"function"==typeof a)for(e=a.call(e),c=0;!(u=e.next()).done;)u=u.value,a=t+h(u,c++),i+=y(u,a,n,o);else"object"===u&&(n=""+e,r("31","[object Object]"===n?"object with keys {"+Object.keys(e).join(", ")+"}":n,""));return i}function h(e,t){return"object"==typeof e&&null!==e&&null!=e.key?f(e.key):t.toString(36)}function d(e,t){e.func.call(e.context,t,e.count++)}function v(e,t,n){var r=e.result,o=e.keyPrefix;e=e.func.call(e.context,t,e.count++),Array.isArray(e)?b(e,r,n,O.thatReturnsArgument):null!=e&&(l(e)&&(t=o+(!e.key||t&&t.key===e.key?"":(""+e.key).replace(I,"$&/")+"/")+n,e={$$typeof:k,type:e.type,key:t,ref:e.ref,props:e.props,_owner:e._owner}),r.push(e))}function b(e,t,n,r,o){var u="";null!=n&&(u=(""+n).replace(I,"$&/")+"/"),t=s(t,u,r,o),null==e||y(e,"",v,t),p(t)}/** @license React v16.2.0
- * react.production.min.js
- *
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-var m=n(4),g=n(5),O=n(0),_="function"==typeof Symbol&&Symbol.for,k=_?Symbol.for("react.element"):60103,j=_?Symbol.for("react.call"):60104,w=_?Symbol.for("react.return"):60105,S=_?Symbol.for("react.portal"):60106,P=_?Symbol.for("react.fragment"):60107,R="function"==typeof Symbol&&Symbol.iterator,x={isMounted:function(){return!1},enqueueForceUpdate:function(){},enqueueReplaceState:function(){},enqueueSetState:function(){}};o.prototype.isReactComponent={},o.prototype.setState=function(e,t){"object"!=typeof e&&"function"!=typeof e&&null!=e&&r("85"),this.updater.enqueueSetState(this,e,t,"setState")},o.prototype.forceUpdate=function(e){this.updater.enqueueForceUpdate(this,e,"forceUpdate")},i.prototype=o.prototype;var E=u.prototype=new i;E.constructor=u,m(E,o.prototype),E.isPureReactComponent=!0;var T=c.prototype=new i;T.constructor=c,m(T,o.prototype),T.unstable_isAsyncReactComponent=!0,T.render=function(){return this.props.children};var A={current:null},C=Object.prototype.hasOwnProperty,$={key:!0,ref:!0,__self:!0,__source:!0},I=/\/+/g,U=[],q={Children:{map:function(e,t,n){if(null==e)return e;var r=[];return b(e,r,null,t,n),r},forEach:function(e,t,n){if(null==e)return e;t=s(null,null,t,n),null==e||y(e,"",d,t),p(t)},count:function(e){return null==e?0:y(e,"",O.thatReturnsNull,null)},toArray:function(e){var t=[];return b(e,t,null,O.thatReturnsArgument),t},only:function(e){return l(e)||r("143"),e}},Component:o,PureComponent:u,unstable_AsyncComponent:c,Fragment:P,createElement:a,cloneElement:function(e,t,n){var r=m({},e.props),o=e.key,u=e.ref,i=e._owner;if(null!=t){if(void 0!==t.ref&&(u=t.ref,i=A.current),void 0!==t.key&&(o=""+t.key),e.type&&e.type.defaultProps)var c=e.type.defaultProps;for(a in t)C.call(t,a)&&!$.hasOwnProperty(a)&&(r[a]=void 0===t[a]&&void 0!==c?c[a]:t[a])}var a=arguments.length-2;if(1===a)r.children=n;else if(1<a){c=Array(a);for(var l=0;l<a;l++)c[l]=arguments[l+2];r.children=c}return{$$typeof:k,type:e.type,key:o,ref:u,props:r,_owner:i}},createFactory:function(e){var t=a.bind(null,e);return t.type=e,t},isValidElement:l,version:"16.2.0",__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentOwner:A,assign:m}},N=Object.freeze({default:q}),F=N&&q||N;e.exports=F.default?F.default:F},function(e,t,n){"use strict";function r(e){if(null===e||void 0===e)throw new TypeError("Object.assign cannot be called with null or undefined");return Object(e)}/*
-object-assign
-(c) Sindre Sorhus
-@license MIT
-*/
-var o=Object.getOwnPropertySymbols,u=Object.prototype.hasOwnProperty,i=Object.prototype.propertyIsEnumerable;e.exports=function(){try{if(!Object.assign)return!1;var e=new String("abc");if(e[5]="de","5"===Object.getOwnPropertyNames(e)[0])return!1;for(var t={},n=0;n<10;n++)t["_"+String.fromCharCode(n)]=n;if("0123456789"!==Object.getOwnPropertyNames(t).map(function(e){return t[e]}).join(""))return!1;var r={};return"abcdefghijklmnopqrst".split("").forEach(function(e){r[e]=e}),"abcdefghijklmnopqrst"===Object.keys(Object.assign({},r)).join("")}catch(e){return!1}}()?Object.assign:function(e,t){for(var n,c,a=r(e),l=1;l<arguments.length;l++){n=Object(arguments[l]);for(var f in n)u.call(n,f)&&(a[f]=n[f]);if(o){c=o(n);for(var s=0;s<c.length;s++)i.call(n,c[s])&&(a[c[s]]=n[c[s]])}}return a}},function(e,t,n){"use strict";var r={};e.exports=r},function(e,t,n){e.exports=n(7)()},function(e,t,n){"use strict";var r=n(0),o=n(8),u=n(9);e.exports=function(){function e(e,t,n,r,i,c){c!==u&&o(!1,"Calling PropTypes validators directly is not supported by the `prop-types` package. Use PropTypes.checkPropTypes() to call them. Read more at http://fb.me/use-check-prop-types")}function t(){return e}e.isRequired=e;var n={array:e,bool:e,func:e,number:e,object:e,string:e,symbol:e,any:e,arrayOf:t,element:e,instanceOf:t,node:e,objectOf:t,oneOf:t,oneOfType:t,shape:t,exact:t};return n.checkPropTypes=r,n.PropTypes=n,n}},function(e,t,n){"use strict";function r(e,t,n,r,u,i,c,a){if(o(t),!e){var l;if(void 0===t)l=new Error("Minified exception occurred; use the non-minified dev environment for the full error message and additional helpful warnings.");else{var f=[n,r,u,i,c,a],s=0;l=new Error(t.replace(/%s/g,function(){return f[s++]})),l.name="Invariant Violation"}throw l.framesToPop=1,l}}var o=function(e){};e.exports=r},function(e,t,n){"use strict";e.exports="SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED"}]);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-/***/ }),
-/* 66 */
-/***/ (function(module, exports, __webpack_require__) {
+var _react = __webpack_require__(1);
 
-!function(e,t){ true?module.exports=t():"function"==typeof define&&define.amd?define([],t):"object"==typeof exports?exports["react-twitch-embed-video"]=t():e["react-twitch-embed-video"]=t()}("undefined"!=typeof self?self:this,function(){return webpackJsonpreact_twitch_embed_video([1],[,function(e,t,n){"use strict";function o(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function i(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function r(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}Object.defineProperty(t,"__esModule",{value:!0});var a=n(2),s=n.n(a),d=n(6),c=n.n(d),p=function(){function e(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}return function(t,n,o){return n&&e(t.prototype,n),o&&e(t,o),t}}(),u=function(e){function t(){return o(this,t),i(this,(t.__proto__||Object.getPrototypeOf(t)).apply(this,arguments))}return r(t,e),p(t,[{key:"componentDidMount",value:function(){var e=this,t=void 0;if(window.Twitch&&window.Twitch.Embed)t=new window.Twitch.Embed(this.props.targetClass,Object.assign({},this.props)),this._addEventListeners(t);else{var n=document.createElement("script");n.setAttribute("src","https://embed.twitch.tv/embed/v1.js"),n.addEventListener("load",function(){t=new window.Twitch.Embed(e.props.targetClass,Object.assign({},e.props)),e._addEventListeners(t)}),document.body.appendChild(n)}}},{key:"_addEventListeners",value:function(e){e.addEventListener(window.Twitch.Embed.AUTHENTICATE,function(e){this.props.onUserLogin&&this.props.onUserLogin(e)}.bind(this)),e.addEventListener(window.Twitch.Embed.VIDEO_PLAY,function(e){this.props.onVideoPlay&&this.props.onVideoPlay(e)}.bind(this)),e.addEventListener(window.Twitch.Embed.VIDEO_READY,function(){var t=e.getPlayer();this.props.onPlayerReady&&this.props.onPlayerReady(t)}.bind(this))}},{key:"render",value:function(){return s.a.createElement("div",{id:this.props.targetClass})}}]),t}(a.PureComponent);u.propTypes={targetClass:c.a.string,channel:c.a.string.isRequired,video:c.a.string.isRequired,width:c.a.oneOfType([c.a.string,c.a.number]),height:c.a.oneOfType([c.a.string,c.a.number]),allowfullscreen:c.a.bool,autoplay:c.a.bool,chat:c.a.oneOf(["default","mobile"]),collection:c.a.string,layout:c.a.string,muted:c.a.bool,playsinline:c.a.bool,theme:c.a.string,time:c.a.string,onUserLogin:c.a.func,onVideoPlay:c.a.func,onPlayerReady:c.a.func},u.defaultProps={targetClass:"twitch-embed",width:"940",height:"480"},t.default=u}],[1])});
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(2);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // Demo component
+// this is only example component
+
+var EMBED_URL = 'https://embed.twitch.tv/embed/v1.js';
+
+var TwitchEmbedVideo = function (_PureComponent) {
+    _inherits(TwitchEmbedVideo, _PureComponent);
+
+    function TwitchEmbedVideo() {
+        _classCallCheck(this, TwitchEmbedVideo);
+
+        return _possibleConstructorReturn(this, (TwitchEmbedVideo.__proto__ || Object.getPrototypeOf(TwitchEmbedVideo)).apply(this, arguments));
+    }
+
+    _createClass(TwitchEmbedVideo, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var _this2 = this;
+
+            var embed = void 0;
+            if (window.Twitch && window.Twitch.Embed) {
+                embed = new window.Twitch.Embed(this.props.targetClass, _extends({}, this.props));
+                this._addEventListeners(embed);
+            } else {
+                var script = document.createElement('script');
+                script.setAttribute('src', EMBED_URL);
+                script.addEventListener('load', function () {
+                    embed = new window.Twitch.Embed(_this2.props.targetClass, _extends({}, _this2.props));
+                    _this2._addEventListeners(embed);
+                });
+
+                document.body.appendChild(script);
+            }
+        }
+    }, {
+        key: '_addEventListeners',
+        value: function _addEventListeners(embed) {
+            embed.addEventListener(window.Twitch.Embed.AUTHENTICATE, function (user) {
+                if (this.props.onUserLogin) {
+                    this.props.onUserLogin(user);
+                }
+            }.bind(this));
+
+            embed.addEventListener(window.Twitch.Embed.VIDEO_PLAY, function (data) {
+                if (this.props.onVideoPlay) {
+                    this.props.onVideoPlay(data);
+                }
+            }.bind(this));
+
+            /** Player ready for programmatic commands */
+            embed.addEventListener(window.Twitch.Embed.VIDEO_READY, function () {
+                var player = embed.getPlayer();
+
+                if (this.props.onPlayerReady) {
+                    this.props.onPlayerReady(player);
+                }
+            }.bind(this));
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement('div', { id: this.props.targetClass });
+        }
+    }]);
+
+    return TwitchEmbedVideo;
+}(_react.PureComponent);
+
+TwitchEmbedVideo.propTypes = {
+    /** Custom class name to target */
+    targetClass: _propTypes2.default.string,
+    /** Optional for VOD embeds; otherwise, required. Name of the chat room and channel to stream. */
+    channel: _propTypes2.default.string.isRequired,
+    /** ID of a VOD to play. Chat replay is not supported. */
+    video: _propTypes2.default.string,
+    /** Width of video embed including chat */
+    width: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.number]),
+    /** Maximum width of the rendered element, in pixels. This can be expressed as a percentage, by passing a string like 100% */
+    height: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.number]),
+    /** If true, the player can go full screen. Default: true. */
+    allowfullscreen: _propTypes2.default.bool,
+    /** If true, the video starts playing automatically, without the user clicking play. The exception is mobile platforms, on which video cannot be played without user interaction. Default: true. */
+    autoplay: _propTypes2.default.bool,
+    /** Specifies the type of chat to use. Valid values:
+        * default: Default value, uses full-featured chat.
+        * mobile: Uses a read-only version of chat, optimized for mobile devices.
+         To omit chat, specify a value of video for the layout option. */
+    chat: _propTypes2.default.oneOf(['default', 'mobile']),
+    /** The VOD collection to play. If you use this, you also must specify an initial video in the VOD collection. All VODs are auto-played. Rechat is not supported */
+    collection: _propTypes2.default.string,
+    /** Determines the screen layout. Valid values:
+        video-and-chat: Default if channel is provided. Shows both video and chat side-by-side. At narrow sizes, chat renders under the video player.
+        * video: Default if channel is not provided. Shows only the video player (omits chat). */
+    layout: _propTypes2.default.string,
+    /** Specifies whether the initial state of the video is muted. Default: false. */
+    muted: _propTypes2.default.bool,
+    /** If true, the embedded player plays inline for mobile iOS apps. Default: false. */
+    playsinline: _propTypes2.default.bool,
+    /** The Twitch embed color theme to use. Valid values: light or dark. Default: light. */
+    theme: _propTypes2.default.string,
+    /** Time in the video where playback starts. Specifies hours, minutes, and seconds. Default: 0h0m0s (the start of the video). */
+    time: _propTypes2.default.string,
+    /** User has logged in callback */
+    onUserLogin: _propTypes2.default.func,
+    /** The video started playing. This callback receives an object with a sessionId property. */
+    onVideoPlay: _propTypes2.default.func,
+    /** The video player is ready for API commands. This callback receives the player object. */
+    onPlayerReady: _propTypes2.default.func
+};
+TwitchEmbedVideo.defaultProps = {
+    targetClass: 'twitch-embed',
+    width: "940",
+    height: "480"
+};
+exports.default = TwitchEmbedVideo;
 
 /***/ })
 /******/ ]);

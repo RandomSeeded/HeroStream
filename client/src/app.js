@@ -4,7 +4,7 @@
 
 import * as _ from 'lodash';
 import { BrowserRouter, Link, Route } from 'react-router-dom';
-import ReactTwitchEmbedVideo from "react-twitch-embed-video"
+import ReactTwitchEmbedVideo from "./components/ReactTwitchEmbedVideo"
 
 const socket = io('http://localhost:5975');
 
@@ -137,8 +137,8 @@ const HEROS = [
 ];
 
 let streams;
-let currentStream; // { hero, channel }
 let twitchEmbed;
+
 socket.on('streams', data => {
   console.log('data', data);
   streams = data;
@@ -149,33 +149,46 @@ socket.on('streams', data => {
 // Answer 2: if there's a better stream showing your hero?
 
 class TwitchEmbed extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      channel: props.channel
-    };
-  }
   render() {
     // Necessary for the side effects
     return (
       <div>
-        <ReactTwitchEmbedVideo channel={this.state.channel}/>
+        <p>{this.props.channel}</p>
+        <ReactTwitchEmbedVideo channel={this.props.channel}/>
       </div>
     );
   }
 }
 
+let hackyThing = 0;
 class HeroStream extends React.Component {
+  getChannel(heroName) {
+    const channelMetadata = _.first(streams[heroName]);
+    return _.get(channelMetadata, 'login', 'monstercat');
+  }
+  updateStream() {
+    const streamersForThisHero = _.map(streams[this.state.heroName], 'login');
+    if (!_.includes(streamersForThisHero, this.state.channel)) {
+      const channel = this.getChannel(this.state.heroName);
+      this.setState({ channel });
+    }
+  }
+  componentDidMount() {
+    this.interval = setInterval(() => this.updateStream(), 3000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
   constructor(props) {
     super(props);
+    const channel = this.getChannel(props.heroName);
     this.state = {
-      heroName: props.heroName
+      heroName: props.heroName,
+      channel,
     };
   }
   render() {
-    const channelMetadata = _.first(streams[this.state.heroName]);
-    const channel = _.get(channelMetadata, 'login', 'monstercat');
-    return <TwitchEmbed channel={channel}/>;
+    return <TwitchEmbed channel={this.state.channel} key={this.state.channel}/>;
   }
 }
 
@@ -226,4 +239,3 @@ ReactDOM.render(
   <App/>,
   document.getElementById('root')
 );
-
