@@ -5,15 +5,13 @@
     <title>Hero Streamer</title>
     <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
-    <!-- TODO: dont actually require babel lol -->
-    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
   </head>
   <body>
     <!-- Load the Twitch embed script -->
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
 
     <div id="root"></div>
-    <script type="text/babel" src="./dist/bundle.js"></script>
     <script src="./socket.io/socket.io.js"></script>
+    <script src="./dist/bundle.js"></script>
   </body>
 </html>
