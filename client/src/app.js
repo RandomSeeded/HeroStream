@@ -213,7 +213,7 @@ class App extends React.Component {
             <Navbar/>
           </div>
           <div className="columns">
-            <div className="column is-one-quarter menu">
+            <div className="column is-narrow menu">
               <Sidebar/>
             </div>
             <div className="column">

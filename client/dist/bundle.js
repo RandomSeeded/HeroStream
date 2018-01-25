@@ -2286,7 +2286,7 @@ var App = function (_React$Component3) {
             { className: 'columns' },
             React.createElement(
               'div',
-              { className: 'column is-one-quarter menu' },
+              { className: 'column is-narrow menu' },
               React.createElement(Sidebar, null)
             ),
             React.createElement(
