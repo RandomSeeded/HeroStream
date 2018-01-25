@@ -140,10 +140,17 @@ const HEROS = [
 let streams;
 let twitchEmbed;
 
-socket.on('streams', data => {
-  console.log('data', data);
+// Make both the HeroStream and the NoMetadataError components subscribe to this event
+// NoMetadataError will use it to remove the error
+socket.on('streams', (data, cb) => {
   streams = data;
 });
+
+function subscribeToNoMetadata(cb) {
+  socket.on('noMetadata', () => {
+    cb();
+  });
+}
 
 // Question: when do you want to refresh?
 // Answer: if your stream isn't showing your hero anymore.
@@ -175,6 +182,10 @@ class HeroStream extends React.Component {
     }
   }
   componentDidMount() {
+    // Theres a better way of doing this!
+    // This approach is basically: poll every three seconds against the state that's modified.
+    // We can do better: we can provide a callback function
+    // Look into this once twitch is back up :(
     this.interval = setInterval(() => this.updateStream(), 3000);
   }
   componentWillUnmount() {
@@ -206,12 +217,29 @@ class App extends React.Component {
               <Sidebar/>
             </div>
             <div className="column">
+              <NoMetadataError/>
               <Routes/>
             </div>
           </div>
         </div>
       </BrowserRouter>
     );
+  }
+}
+
+class NoMetadataError extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      display: false,
+    };
+    subscribeToNoMetadata(() => this.setState({ display : true }));
+  }
+  render() {
+    const errorMessage = (
+      <div className="notification is-danger">Error: cannot retrieve streams. Twitch Metadata API temporarily offline.</div>
+    );
+    return this.state.display ? errorMessage : null;
   }
 }
 

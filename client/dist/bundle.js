@@ -2150,10 +2150,17 @@ var HEROS = [{
 var streams = void 0;
 var twitchEmbed = void 0;
 
-socket.on('streams', function (data) {
-  console.log('data', data);
+// Make both the HeroStream and the NoMetadataError components subscribe to this event
+// NoMetadataError will use it to remove the error
+socket.on('streams', function (data, cb) {
   streams = data;
 });
+
+function subscribeToNoMetadata(cb) {
+  socket.on('noMetadata', function () {
+    cb();
+  });
+}
 
 // Question: when do you want to refresh?
 // Answer: if your stream isn't showing your hero anymore.
@@ -2213,6 +2220,10 @@ var HeroStream = function (_React$Component2) {
     value: function componentDidMount() {
       var _this3 = this;
 
+      // Theres a better way of doing this!
+      // This approach is basically: poll every three seconds against the state that's modified.
+      // We can do better: we can provide a callback function
+      // Look into this once twitch is back up :(
       this.interval = setInterval(function () {
         return _this3.updateStream();
       }, 3000);
@@ -2281,6 +2292,7 @@ var App = function (_React$Component3) {
             React.createElement(
               'div',
               { className: 'column' },
+              React.createElement(NoMetadataError, null),
               React.createElement(Routes, null)
             )
           )
@@ -2292,8 +2304,40 @@ var App = function (_React$Component3) {
   return App;
 }(React.Component);
 
-var Navbar = function (_React$Component4) {
-  _inherits(Navbar, _React$Component4);
+var NoMetadataError = function (_React$Component4) {
+  _inherits(NoMetadataError, _React$Component4);
+
+  function NoMetadataError(props) {
+    _classCallCheck(this, NoMetadataError);
+
+    var _this5 = _possibleConstructorReturn(this, (NoMetadataError.__proto__ || Object.getPrototypeOf(NoMetadataError)).call(this, props));
+
+    _this5.state = {
+      display: false
+    };
+    subscribeToNoMetadata(function () {
+      return _this5.setState({ display: true });
+    });
+    return _this5;
+  }
+
+  _createClass(NoMetadataError, [{
+    key: 'render',
+    value: function render() {
+      var errorMessage = React.createElement(
+        'div',
+        { className: 'notification is-danger' },
+        'Error: cannot retrieve streams. Twitch Metadata API temporarily offline.'
+      );
+      return this.state.display ? errorMessage : null;
+    }
+  }]);
+
+  return NoMetadataError;
+}(React.Component);
+
+var Navbar = function (_React$Component5) {
+  _inherits(Navbar, _React$Component5);
 
   function Navbar() {
     _classCallCheck(this, Navbar);
@@ -2341,8 +2385,8 @@ var Navbar = function (_React$Component4) {
   return Navbar;
 }(React.Component);
 
-var Sidebar = function (_React$Component5) {
-  _inherits(Sidebar, _React$Component5);
+var Sidebar = function (_React$Component6) {
+  _inherits(Sidebar, _React$Component6);
 
   function Sidebar() {
     _classCallCheck(this, Sidebar);
@@ -2383,8 +2427,8 @@ var Sidebar = function (_React$Component5) {
   return Sidebar;
 }(React.Component);
 
-var Routes = function (_React$Component6) {
-  _inherits(Routes, _React$Component6);
+var Routes = function (_React$Component7) {
+  _inherits(Routes, _React$Component7);
 
   function Routes() {
     _classCallCheck(this, Routes);

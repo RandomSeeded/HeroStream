@@ -73,7 +73,7 @@ function getMetadata() {
       });
       request.get(usersRequestOpts, cb);
     },
-    (res, body, cb) => {
+    async.asyncify((res, body) => {
       const data = JSON.parse(body).data;
       const streamsByUserId = _.keyBy(data, 'id');
       const mergedStreamData = _.map(streamsWithHeros, stream => {
@@ -84,8 +84,11 @@ function getMetadata() {
         const hero = _.get(stream, 'overwatch.broadcaster.hero.name');
         return hero;
       });
+      if (_.isEmpty(streamsByHero)) {
+        return io.sockets.emit('noMetadata');
+      }
       io.sockets.emit('streams', streamsByHero);
-    },
+    }),
   ]);
 }
 
