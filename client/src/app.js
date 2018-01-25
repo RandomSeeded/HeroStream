@@ -231,13 +231,6 @@ class Navbar extends React.Component {
         </div>
       </nav>
     );
-    // <a className="button navbar-burger" href="https://github.com/RandomSeeded/HeroStream">
-    //   <span className="icon"></span>
-    //   <span>GitHub</span>
-    // </a>
-    // <div className="navbar-item">
-    // <a href="/">Overwatch Hero Streamer</a>
-    // </div>
   }
 }
 

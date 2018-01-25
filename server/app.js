@@ -4,6 +4,7 @@ const _ = require('lodash');
 const assert = require('assert');
 const async = require('async');
 const express = require('express');
+const moment = require('moment');
 const path = require('path');
 const request = require('request');
 
@@ -62,6 +63,9 @@ function getMetadata() {
       streamsWithHeros = _.filter(streams, stream => {
         return _.has(stream, 'overwatch.broadcaster.hero.name');
       });
+      if (_.isEmpty(streamsWithHeros)) {
+        console.log(`${moment()}: Twitch not currently returning any streams with heros :(`);
+      }
       const usersRequestOpts = _.merge({}, usersRequest, {
         qs: {
           id: _.map(streamsWithHeros, 'user_id'),

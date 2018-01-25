@@ -2331,13 +2331,6 @@ var Navbar = function (_React$Component4) {
           )
         )
       );
-      // <a className="button navbar-burger" href="https://github.com/RandomSeeded/HeroStream">
-      //   <span className="icon"></span>
-      //   <span>GitHub</span>
-      // </a>
-      // <div className="navbar-item">
-      // <a href="/">Overwatch Hero Streamer</a>
-      // </div>
     }
   }]);
 
