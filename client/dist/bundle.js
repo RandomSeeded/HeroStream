@@ -2402,8 +2402,8 @@ var Sidebar = function (_React$Component6) {
           'li',
           { key: i },
           React.createElement(
-            _reactRouterDom.Link,
-            { to: hero.routeName, className: 'is-hovered' },
+            _reactRouterDom.NavLink,
+            { to: hero.routeName, activeClassName: 'is-active', className: 'is-hovered' },
             hero.displayName
           )
         );

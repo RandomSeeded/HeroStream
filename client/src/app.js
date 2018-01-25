@@ -4,7 +4,7 @@
 
 import * as _ from 'lodash';
 import io from 'socket.io-client';
-import { BrowserRouter, Link, Route } from 'react-router-dom';
+import { BrowserRouter, NavLink, Route } from 'react-router-dom';
 import ReactTwitchEmbedVideo from "./components/ReactTwitchEmbedVideo"
 
 const socket = io();
@@ -268,7 +268,7 @@ class Sidebar extends React.Component {
     const links = HEROS.map((hero, i) => 
       (
         <li key={i}>
-          <Link to={hero.routeName} className="is-hovered">{hero.displayName}</Link>
+          <NavLink to={hero.routeName} activeClassName="is-active" className="is-hovered">{hero.displayName}</NavLink>
         </li>
       )
     );
