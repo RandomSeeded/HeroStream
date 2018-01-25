@@ -6,6 +6,8 @@ import * as _ from 'lodash';
 import io from 'socket.io-client';
 import { BrowserRouter, NavLink, Route } from 'react-router-dom';
 import ReactTwitchEmbedVideo from "./components/ReactTwitchEmbedVideo"
+import Toggle from 'react-toggle';
+import 'react-toggle/style.css';
 
 const socket = io();
 
@@ -204,6 +206,27 @@ class HeroStream extends React.Component {
   }
 }
 
+class Options extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      follow: true,
+    }
+  }
+  handleFollowChange() {
+  }
+  render() {
+    return (
+      <label>
+      <Toggle
+        defaultChecked={this.state.follow}
+        onChange={this.handleFollowChange} />
+      <span>Wrapper label tag</span>
+    </label>
+    );
+  }
+}
+
 class App extends React.Component {
   render() {
     return (
@@ -219,6 +242,7 @@ class App extends React.Component {
             <div className="column">
               <NoMetadataError/>
               <Routes/>
+              <Options/>
             </div>
           </div>
         </div>
