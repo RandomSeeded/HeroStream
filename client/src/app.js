@@ -160,9 +160,9 @@ class TwitchEmbed extends React.Component {
   render() {
     // Necessary for the side effects
     return (
-      <div>
+      <div className="container">
         <h1 className="title is-1">{this.props.channel}</h1>
-        <ReactTwitchEmbedVideo channel={this.props.channel} width="90%"/>
+        <ReactTwitchEmbedVideo channel={this.props.channel} width="100%"/>
       </div>
     );
   }
@@ -291,9 +291,7 @@ class Routes extends React.Component {
       <Route path={hero.routeName} key={i} render={()=><HeroStream heroName={hero.twitchName}/>}/>
     );
     return (
-      <div>
-        {routes}
-      </div>
+      routes
     );
   }
 }

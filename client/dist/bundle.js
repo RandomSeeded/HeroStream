@@ -2181,13 +2181,13 @@ var TwitchEmbed = function (_React$Component) {
       // Necessary for the side effects
       return React.createElement(
         'div',
-        null,
+        { className: 'container' },
         React.createElement(
           'h1',
           { className: 'title is-1' },
           this.props.channel
         ),
-        React.createElement(_ReactTwitchEmbedVideo2.default, { channel: this.props.channel, width: '90%' })
+        React.createElement(_ReactTwitchEmbedVideo2.default, { channel: this.props.channel, width: '100%' })
       );
     }
   }]);
@@ -2439,11 +2439,7 @@ var Routes = function (_React$Component7) {
             return React.createElement(HeroStream, { heroName: hero.twitchName });
           } });
       });
-      return React.createElement(
-        'div',
-        null,
-        routes
-      );
+      return routes;
     }
   }]);
 
