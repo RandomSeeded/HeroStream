@@ -16,6 +16,8 @@ const { clientId, bearer } = require('./clientId');
 assert(clientId, 'Error: missing configuration file');
 
 app.use(express.static(path.join(__dirname, '../client')));
+app.get('*', (req, res, next) =>
+  res.sendfile('/index.html', { root: path.join(__dirname, '../client') }));
 
 const OVERWATCH_GAME_ID = 488552;
 const REFRESH_RATE = 15000;
