@@ -2172,11 +2172,11 @@ var TwitchEmbed = function (_React$Component) {
         'div',
         null,
         React.createElement(
-          'p',
-          null,
+          'h1',
+          { className: 'title is-1' },
           this.props.channel
         ),
-        React.createElement(_ReactTwitchEmbedVideo2.default, { channel: this.props.channel })
+        React.createElement(_ReactTwitchEmbedVideo2.default, { channel: this.props.channel, width: '90%' })
       );
     }
   }]);
@@ -2261,8 +2261,25 @@ var App = function (_React$Component3) {
         React.createElement(
           'div',
           null,
-          React.createElement(Nav, null),
-          React.createElement(Routes, null)
+          React.createElement(
+            'div',
+            null,
+            React.createElement(Navbar, null)
+          ),
+          React.createElement(
+            'div',
+            { className: 'columns' },
+            React.createElement(
+              'div',
+              { className: 'column is-one-quarter menu' },
+              React.createElement(Sidebar, null)
+            ),
+            React.createElement(
+              'div',
+              { className: 'column' },
+              React.createElement(Routes, null)
+            )
+          )
         )
       );
     }
@@ -2271,25 +2288,81 @@ var App = function (_React$Component3) {
   return App;
 }(React.Component);
 
-var Nav = function (_React$Component4) {
-  _inherits(Nav, _React$Component4);
+var Navbar = function (_React$Component4) {
+  _inherits(Navbar, _React$Component4);
 
-  function Nav() {
-    _classCallCheck(this, Nav);
+  function Navbar() {
+    _classCallCheck(this, Navbar);
 
-    return _possibleConstructorReturn(this, (Nav.__proto__ || Object.getPrototypeOf(Nav)).apply(this, arguments));
+    return _possibleConstructorReturn(this, (Navbar.__proto__ || Object.getPrototypeOf(Navbar)).apply(this, arguments));
   }
 
-  _createClass(Nav, [{
+  _createClass(Navbar, [{
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'nav',
+        { className: 'navbar', role: 'navigation' },
+        React.createElement(
+          'div',
+          { className: 'navbar-brand' },
+          React.createElement(
+            'a',
+            { className: 'navbar-item', href: '/' },
+            'Overwatch Hero Streamer'
+          )
+        ),
+        React.createElement(
+          'div',
+          { className: 'navbar-menu' },
+          React.createElement(
+            'div',
+            { className: 'navbar-end' },
+            React.createElement(
+              'a',
+              { className: 'navbar-item', href: 'https://github.com/RandomSeeded/HeroStream' },
+              'Github'
+            ),
+            React.createElement(
+              'a',
+              { className: 'navbar-item', href: 'http://natewillard.com' },
+              'Author'
+            )
+          )
+        )
+      );
+      // <a className="button navbar-burger" href="https://github.com/RandomSeeded/HeroStream">
+      //   <span className="icon"></span>
+      //   <span>GitHub</span>
+      // </a>
+      // <div className="navbar-item">
+      // <a href="/">Overwatch Hero Streamer</a>
+      // </div>
+    }
+  }]);
+
+  return Navbar;
+}(React.Component);
+
+var Sidebar = function (_React$Component5) {
+  _inherits(Sidebar, _React$Component5);
+
+  function Sidebar() {
+    _classCallCheck(this, Sidebar);
+
+    return _possibleConstructorReturn(this, (Sidebar.__proto__ || Object.getPrototypeOf(Sidebar)).apply(this, arguments));
+  }
+
+  _createClass(Sidebar, [{
     key: 'render',
     value: function render() {
       var links = HEROS.map(function (hero, i) {
         return React.createElement(
-          'nav',
+          'li',
           { key: i },
           React.createElement(
             _reactRouterDom.Link,
-            { to: hero.routeName },
+            { to: hero.routeName, className: 'is-hovered' },
             hero.displayName
           )
         );
@@ -2297,16 +2370,24 @@ var Nav = function (_React$Component4) {
       return React.createElement(
         'div',
         null,
-        links
+        React.createElement(
+          'nav',
+          null,
+          React.createElement(
+            'ul',
+            { className: 'menu-list' },
+            links
+          )
+        )
       );
     }
   }]);
 
-  return Nav;
+  return Sidebar;
 }(React.Component);
 
-var Routes = function (_React$Component5) {
-  _inherits(Routes, _React$Component5);
+var Routes = function (_React$Component6) {
+  _inherits(Routes, _React$Component6);
 
   function Routes() {
     _classCallCheck(this, Routes);

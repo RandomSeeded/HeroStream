@@ -153,8 +153,8 @@ class TwitchEmbed extends React.Component {
     // Necessary for the side effects
     return (
       <div>
-        <p>{this.props.channel}</p>
-        <ReactTwitchEmbedVideo channel={this.props.channel}/>
+        <h1 className="title is-1">{this.props.channel}</h1>
+        <ReactTwitchEmbedVideo channel={this.props.channel} width="90%"/>
       </div>
     );
   }
@@ -197,26 +197,66 @@ class App extends React.Component {
     return (
       <BrowserRouter>
         <div>
-          <Nav/>
-          <Routes/>
+          <div>
+            <Navbar/>
+          </div>
+          <div className="columns">
+            <div className="column is-one-quarter menu">
+              <Sidebar/>
+            </div>
+            <div className="column">
+              <Routes/>
+            </div>
+          </div>
         </div>
       </BrowserRouter>
     );
   }
 }
 
-class Nav extends React.Component {
+class Navbar extends React.Component {
+  render() {
+    return (
+      <nav className="navbar" role="navigation">
+        <div className="navbar-brand">
+          <a className="navbar-item" href="/">
+            Overwatch Hero Streamer
+          </a>
+        </div>
+        <div className="navbar-menu">
+          <div className="navbar-end">
+            <a className="navbar-item" href="https://github.com/RandomSeeded/HeroStream">Github</a>
+            <a className="navbar-item" href="http://natewillard.com">Author</a>
+          </div>
+        </div>
+      </nav>
+    );
+    // <a className="button navbar-burger" href="https://github.com/RandomSeeded/HeroStream">
+    //   <span className="icon"></span>
+    //   <span>GitHub</span>
+    // </a>
+    // <div className="navbar-item">
+    // <a href="/">Overwatch Hero Streamer</a>
+    // </div>
+  }
+}
+
+class Sidebar extends React.Component {
   render() {
     const links = HEROS.map((hero, i) => 
       (
-        <nav key={i}>
-          <Link to={hero.routeName}>{hero.displayName}</Link>
-        </nav>
+        <li key={i}>
+          <Link to={hero.routeName} className="is-hovered">{hero.displayName}</Link>
+        </li>
       )
     );
     return (
       <div>
-        {links}
+        <nav>
+          <ul className="menu-list">
+            {links}
+          </ul>
+        </nav>
       </div>
     );
   }
