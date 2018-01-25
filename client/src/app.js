@@ -7,7 +7,7 @@ import io from 'socket.io-client';
 import { BrowserRouter, Link, Route } from 'react-router-dom';
 import ReactTwitchEmbedVideo from "./components/ReactTwitchEmbedVideo"
 
-const socket = io('http://localhost:5975');
+const socket = io();
 
 const HEROS = [
   {
