@@ -237,7 +237,7 @@ class NoMetadataError extends React.Component {
   }
   render() {
     const errorMessage = (
-      <div className="notification is-danger">Error: cannot retrieve streams. Twitch Metadata API temporarily offline.</div>
+      <div className="notification is-danger">Error: cannot retrieve streams. Please try again later.</div>
     );
     return this.state.display ? errorMessage : null;
   }
@@ -253,9 +253,10 @@ class Navbar extends React.Component {
           </a>
         </div>
         <div className="navbar-menu">
-          <div className="navbar-end">
-            <a className="navbar-item" href="https://github.com/RandomSeeded/HeroStream">Github</a>
-            <a className="navbar-item" href="http://natewillard.com">Author</a>
+          <div className="navbar-end is-grouped">
+            <a className="navbar-item button is-large" href="https://github.com/RandomSeeded/HeroStream">
+              <span className="icon is-medium fab fa-github-square fa-inverse"></span>
+            </a>
           </div>
         </div>
       </nav>

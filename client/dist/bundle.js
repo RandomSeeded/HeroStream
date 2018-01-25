@@ -2327,7 +2327,7 @@ var NoMetadataError = function (_React$Component4) {
       var errorMessage = React.createElement(
         'div',
         { className: 'notification is-danger' },
-        'Error: cannot retrieve streams. Twitch Metadata API temporarily offline.'
+        'Error: cannot retrieve streams. Please try again later.'
       );
       return this.state.display ? errorMessage : null;
     }
@@ -2365,16 +2365,11 @@ var Navbar = function (_React$Component5) {
           { className: 'navbar-menu' },
           React.createElement(
             'div',
-            { className: 'navbar-end' },
+            { className: 'navbar-end is-grouped' },
             React.createElement(
               'a',
-              { className: 'navbar-item', href: 'https://github.com/RandomSeeded/HeroStream' },
-              'Github'
-            ),
-            React.createElement(
-              'a',
-              { className: 'navbar-item', href: 'http://natewillard.com' },
-              'Author'
+              { className: 'navbar-item button is-large', href: 'https://github.com/RandomSeeded/HeroStream' },
+              React.createElement('span', { className: 'icon is-medium fab fa-github-square fa-inverse' })
             )
           )
         )
