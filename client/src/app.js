@@ -171,7 +171,7 @@ class TwitchEmbed extends React.Component {
 let hackyThing = 0;
 class HeroStream extends React.Component {
   getChannel(heroName) {
-    const channelMetadata = _.first(streams[heroName]);
+    const channelMetadata = _.first(_.get(streams, heroName, []));
     return _.get(channelMetadata, 'login', 'monstercat');
   }
   updateStream() {
@@ -248,7 +248,7 @@ class Navbar extends React.Component {
     return (
       <nav className="navbar" role="navigation">
         <div className="navbar-brand">
-          <a className="navbar-item" href="/">
+          <a className="navbar-item title is-5" href="/">
             Overwatch Hero Streamer
           </a>
         </div>

@@ -2203,7 +2203,7 @@ var HeroStream = function (_React$Component2) {
   _createClass(HeroStream, [{
     key: 'getChannel',
     value: function getChannel(heroName) {
-      var channelMetadata = _.first(streams[heroName]);
+      var channelMetadata = _.first(_.get(streams, heroName, []));
       return _.get(channelMetadata, 'login', 'monstercat');
     }
   }, {
@@ -2356,7 +2356,7 @@ var Navbar = function (_React$Component5) {
           { className: 'navbar-brand' },
           React.createElement(
             'a',
-            { className: 'navbar-item', href: '/' },
+            { className: 'navbar-item title is-5', href: '/' },
             'Overwatch Hero Streamer'
           )
         ),
