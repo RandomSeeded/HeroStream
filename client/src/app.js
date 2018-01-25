@@ -3,6 +3,7 @@
 // todo: factor components out into separate files
 
 import * as _ from 'lodash';
+import io from 'socket.io-client';
 import { BrowserRouter, Link, Route } from 'react-router-dom';
 import ReactTwitchEmbedVideo from "./components/ReactTwitchEmbedVideo"
 
