@@ -144,6 +144,7 @@ let twitchEmbed;
 // NoMetadataError will use it to remove the error
 socket.on('streams', (data, cb) => {
   streams = data;
+  console.log('data', data);
 });
 
 function subscribeToNoMetadata(cb) {

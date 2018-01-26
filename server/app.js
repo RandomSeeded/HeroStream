@@ -54,6 +54,7 @@ const usersRequest = {
 
 let streamsByHero;
 function parseMetadata(body) {
+  if (!body) return [];
   const parsedBody = JSON.parse(body);
   const streams = parsedBody.data;
   return _.filter(streams, stream => {
@@ -71,13 +72,11 @@ function getMetadata() {
     },
     (res, body, cb) => {
       firstPage = parseMetadata(body);
-      if (_.isEmpty(streamsWithHeros)) {
+      if (_.isEmpty(firstPage)) {
         const error = `${moment()}: Twitch not currently returning any streams with heros :(`;
-        console.log(error);
-        return cb(new Error(error));
       }
       const metadataSecondPage = _.merge({}, metadataRequest, {
-        qs: { cursor: body.cursor },
+        qs: { cursor: _.get(body,'cursor') },
       });
       request.get(metadataSecondPage, cb);
     },
