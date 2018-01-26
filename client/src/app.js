@@ -111,6 +111,11 @@ const HEROS = [
     routeName: '/symmetra',
   },
   {
+    twitchName: 'Torbjorn',
+    displayName: 'Torbjorn',
+    routeName: '/torbjorn',
+  },
+  {
     twitchName: 'Tracer',
     displayName: 'Tracer',
     routeName: '/tracer',
@@ -162,12 +167,17 @@ class HeroStream extends React.Component {
     const channelMetadata = _.first(_.get(streams, heroName, []));
     return _.get(channelMetadata, 'login', 'monstercat');
   }
+  handleAutoSwitchChange(event) {
+    const autoSwitch = !this.state.autoSwitch;
+    this.setState({ autoSwitch });
+  }
   constructor(props) {
     super(props);
-    const channel = this.getChannel(props.heroName);
+    const channel = this.state && !this.state.autoSwitch && this.state.channel || this.getChannel(props.heroName);
     this.state = {
       heroName: props.heroName,
       channel,
+      autoSwitch: true,
     };
     subscribeToStreams((err, streams) => {
       const streamersForThisHero = _.map(streams[this.state.heroName], 'login');
@@ -178,7 +188,7 @@ class HeroStream extends React.Component {
     });
   }
   render() {
-    return <TwitchEmbed channel={this.state.channel} key={this.state.channel}/>;
+    return <TwitchEmbed channel={this.state.channel} key={this.state.channel} autoSwitch={this.state.autoSwitch} handleAutoSwitchChange={this.handleAutoSwitchChange.bind(this)}/>;
   }
 }
 
@@ -187,7 +197,6 @@ class TwitchEmbed extends React.Component {
     super(props);
     this.state = {
       chat: true,
-      autoFollow: true,
     };
   }
   handleChatChange(event) {
@@ -202,7 +211,8 @@ class TwitchEmbed extends React.Component {
         <Options 
           chat={this.state.chat}
           handleChatChange={this.handleChatChange.bind(this)}
-          autoFollow={this.state.autoFollow}
+          handleAutoSwitchChange={this.props.handleAutoSwitchChange}
+          autoSwitch={this.props.autoSwitch}
         />
       </div>
     );
@@ -239,8 +249,8 @@ class Options extends React.Component {
       <div className="level">
         <div className="level-left">
           <div className="level-item">
-            <input id="autoFollow" type="checkbox" name="autoFollow" className="switch is-success is-medium" defaultChecked={this.props.autoFollow}/>
-            <label htmlFor="autoFollow">Auto Follow</label>
+            <input id="autoSwitch" type="checkbox" name="autoSwitch" className="switch is-success is-medium" defaultChecked={this.props.autoSwitch} onChange={this.props.handleAutoSwitchChange}/>
+            <label htmlFor="autoSwitch">Auto-Switch</label>
           </div>
           <div className="level-item">
             <input id="chat" type="checkbox" name="chat" className="switch is-success is-medium" defaultChecked={this.props.chat} onChange={this.props.handleChatChange}/>

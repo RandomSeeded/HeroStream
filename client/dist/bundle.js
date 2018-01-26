@@ -5428,6 +5428,10 @@ var HEROS = [{
   displayName: 'Symmetra',
   routeName: '/symmetra'
 }, {
+  twitchName: 'Torbjorn',
+  displayName: 'Torbjorn',
+  routeName: '/torbjorn'
+}, {
   twitchName: 'Tracer',
   displayName: 'Tracer',
   routeName: '/tracer'
@@ -5479,6 +5483,12 @@ var HeroStream = function (_React$Component) {
       var channelMetadata = _.first(_.get(streams, heroName, []));
       return _.get(channelMetadata, 'login', 'monstercat');
     }
+  }, {
+    key: 'handleAutoSwitchChange',
+    value: function handleAutoSwitchChange(event) {
+      var autoSwitch = !this.state.autoSwitch;
+      this.setState({ autoSwitch: autoSwitch });
+    }
   }]);
 
   function HeroStream(props) {
@@ -5486,10 +5496,11 @@ var HeroStream = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (HeroStream.__proto__ || Object.getPrototypeOf(HeroStream)).call(this, props));
 
-    var channel = _this.getChannel(props.heroName);
+    var channel = _this.state && !_this.state.autoSwitch && _this.state.channel || _this.getChannel(props.heroName);
     _this.state = {
       heroName: props.heroName,
-      channel: channel
+      channel: channel,
+      autoSwitch: true
     };
     subscribeToStreams(function (err, streams) {
       var streamersForThisHero = _.map(streams[_this.state.heroName], 'login');
@@ -5504,7 +5515,7 @@ var HeroStream = function (_React$Component) {
   _createClass(HeroStream, [{
     key: 'render',
     value: function render() {
-      return React.createElement(TwitchEmbed, { channel: this.state.channel, key: this.state.channel });
+      return React.createElement(TwitchEmbed, { channel: this.state.channel, key: this.state.channel, autoSwitch: this.state.autoSwitch, handleAutoSwitchChange: this.handleAutoSwitchChange.bind(this) });
     }
   }]);
 
@@ -5520,8 +5531,7 @@ var TwitchEmbed = function (_React$Component2) {
     var _this2 = _possibleConstructorReturn(this, (TwitchEmbed.__proto__ || Object.getPrototypeOf(TwitchEmbed)).call(this, props));
 
     _this2.state = {
-      chat: true,
-      autoFollow: true
+      chat: true
     };
     return _this2;
   }
@@ -5547,7 +5557,8 @@ var TwitchEmbed = function (_React$Component2) {
         React.createElement(Options, {
           chat: this.state.chat,
           handleChatChange: this.handleChatChange.bind(this),
-          autoFollow: this.state.autoFollow
+          handleAutoSwitchChange: this.props.handleAutoSwitchChange,
+          autoSwitch: this.props.autoSwitch
         })
       );
     }
@@ -5623,11 +5634,11 @@ var Options = function (_React$Component4) {
           React.createElement(
             'div',
             { className: 'level-item' },
-            React.createElement('input', { id: 'autoFollow', type: 'checkbox', name: 'autoFollow', className: 'switch is-success is-medium', defaultChecked: this.props.autoFollow }),
+            React.createElement('input', { id: 'autoSwitch', type: 'checkbox', name: 'autoSwitch', className: 'switch is-success is-medium', defaultChecked: this.props.autoSwitch, onChange: this.props.handleAutoSwitchChange }),
             React.createElement(
               'label',
-              { htmlFor: 'autoFollow' },
-              'Auto Follow'
+              { htmlFor: 'autoSwitch' },
+              'Auto-Switch'
             )
           ),
           React.createElement(
