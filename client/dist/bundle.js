@@ -5471,16 +5471,27 @@ function subscribeToNoMetadata(cb) {
 var TwitchEmbed = function (_React$Component) {
   _inherits(TwitchEmbed, _React$Component);
 
-  function TwitchEmbed() {
+  function TwitchEmbed(props) {
     _classCallCheck(this, TwitchEmbed);
 
-    return _possibleConstructorReturn(this, (TwitchEmbed.__proto__ || Object.getPrototypeOf(TwitchEmbed)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (TwitchEmbed.__proto__ || Object.getPrototypeOf(TwitchEmbed)).call(this, props));
+
+    _this.state = {
+      chat: false,
+      autoFollow: true
+    };
+    return _this;
   }
 
   _createClass(TwitchEmbed, [{
+    key: 'handleChatChange',
+    value: function handleChatChange(event) {
+      var chat = !this.state.chat;
+      this.setState({ chat: chat });
+    }
+  }, {
     key: 'render',
     value: function render() {
-      // Necessary for the side effects
       return React.createElement(
         'div',
         { className: 'container' },
@@ -5489,8 +5500,12 @@ var TwitchEmbed = function (_React$Component) {
           { className: 'title is-1' },
           this.props.channel
         ),
-        React.createElement(_ReactTwitchEmbedVideo2.default, { channel: this.props.channel, width: '100%' }),
-        React.createElement(Options, { chat: 'true', autoFollow: 'true' })
+        React.createElement(_ReactTwitchEmbedVideo2.default, { channel: this.props.channel, layout: this.state.chat ? '' : 'video', width: '100%', key: this.props.channel + this.state.chat }),
+        React.createElement(Options, {
+          chat: this.state.chat,
+          handleChatChange: this.handleChatChange.bind(this),
+          autoFollow: this.state.autoFollow
+        })
       );
     }
   }]);
@@ -5610,16 +5625,10 @@ var App = function (_React$Component3) {
 var Options = function (_React$Component4) {
   _inherits(Options, _React$Component4);
 
-  function Options(props) {
+  function Options() {
     _classCallCheck(this, Options);
 
-    var _this5 = _possibleConstructorReturn(this, (Options.__proto__ || Object.getPrototypeOf(Options)).call(this, props));
-
-    _this5.state = {
-      chat: props.chat,
-      autoFollow: props.autoFollow
-    };
-    return _this5;
+    return _possibleConstructorReturn(this, (Options.__proto__ || Object.getPrototypeOf(Options)).apply(this, arguments));
   }
 
   _createClass(Options, [{
@@ -5634,20 +5643,20 @@ var Options = function (_React$Component4) {
           React.createElement(
             'div',
             { className: 'level-item' },
-            React.createElement('input', { id: 'autoFollow', type: 'checkbox', name: 'autoFollow', className: 'switch is-success is-medium', defaultChecked: this.state.autoFollow }),
+            React.createElement('input', { id: 'autoFollow', type: 'checkbox', name: 'autoFollow', className: 'switch is-success is-medium', defaultChecked: this.props.autoFollow, disabled: true }),
             React.createElement(
               'label',
-              { 'for': 'autoFollow' },
+              { htmlFor: 'autoFollow' },
               'Auto Follow'
             )
           ),
           React.createElement(
             'div',
             { className: 'level-item' },
-            React.createElement('input', { id: 'chat', type: 'checkbox', name: 'chat', className: 'switch is-success is-medium', defaultChecked: this.state.autoFollow }),
+            React.createElement('input', { id: 'chat', type: 'checkbox', name: 'chat', className: 'switch is-success is-medium', defaultChecked: this.props.chat, onChange: this.props.handleChatChange }),
             React.createElement(
               'label',
-              { 'for': 'chat' },
+              { htmlFor: 'chat' },
               'Chat'
             )
           )

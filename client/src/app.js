@@ -157,13 +157,27 @@ function subscribeToNoMetadata(cb) {
 // Answer 2: if there's a better stream showing your hero?
 
 class TwitchEmbed extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      chat: false,
+      autoFollow: true,
+    };
+  }
+  handleChatChange(event) {
+    const chat = !this.state.chat;
+    this.setState({ chat });
+  }
   render() {
-    // Necessary for the side effects
     return (
       <div className="container">
         <h1 className="title is-1">{this.props.channel}</h1>
-        <ReactTwitchEmbedVideo channel={this.props.channel} width="100%"/>
-        <Options chat="true" autoFollow="true"/>
+        <ReactTwitchEmbedVideo channel={this.props.channel} layout={this.state.chat ? '' : 'video'} width="100%" key={this.props.channel + this.state.chat}/>
+        <Options 
+          chat={this.state.chat}
+          handleChatChange={this.handleChatChange.bind(this)}
+          autoFollow={this.state.autoFollow}
+        />
       </div>
     );
   }
@@ -229,24 +243,17 @@ class App extends React.Component {
 }
 
 class Options extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      chat: props.chat,
-      autoFollow: props.autoFollow,
-    };
-  }
   render() {
     return (
       <div className="level">
         <div className="level-left">
           <div className="level-item">
-            <input id="autoFollow" type="checkbox" name="autoFollow" className="switch is-success is-medium" defaultChecked={this.state.autoFollow}/>
-            <label for="autoFollow">Auto Follow</label>
+            <input id="autoFollow" type="checkbox" name="autoFollow" className="switch is-success is-medium" defaultChecked={this.props.autoFollow} disabled/>
+            <label htmlFor="autoFollow">Auto Follow</label>
           </div>
           <div className="level-item">
-            <input id="chat" type="checkbox" name="chat" className="switch is-success is-medium" defaultChecked={this.state.autoFollow}/>
-            <label for="chat">Chat</label>
+            <input id="chat" type="checkbox" name="chat" className="switch is-success is-medium" defaultChecked={this.props.chat} onChange={this.props.handleChatChange}/>
+            <label htmlFor="chat">Chat</label>
           </div>
         </div>
       </div>
