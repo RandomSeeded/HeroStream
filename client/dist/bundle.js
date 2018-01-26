@@ -5598,8 +5598,12 @@ var App = function (_React$Component3) {
             { className: 'columns' },
             React.createElement(
               'div',
-              { className: 'column is-narrow menu' },
-              React.createElement(Sidebar, null)
+              { className: 'column is-narrow' },
+              React.createElement(
+                'aside',
+                { className: 'menu' },
+                React.createElement(Sidebar, null)
+              )
             ),
             React.createElement(
               'div',
@@ -5760,7 +5764,6 @@ var MenuItem = function (_React$Component7) {
   _createClass(MenuItem, [{
     key: 'render',
     value: function render() {
-      console.log('numberOfStreamersForThisHero', this.props.hero.twitchName, this.state.numberOfStreamersForThisHero);
       return React.createElement(
         'li',
         { key: this.props.hero },

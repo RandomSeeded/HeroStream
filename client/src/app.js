@@ -234,8 +234,10 @@ class App extends React.Component {
             <Navbar/>
           </div>
           <div className="columns">
-            <div className="column is-narrow menu">
-              <Sidebar/>
+            <div className="column is-narrow">
+              <aside className="menu">
+                <Sidebar/>
+              </aside>
             </div>
             <div className="column">
               <NoMetadataError/>
@@ -317,7 +319,6 @@ class MenuItem extends React.Component {
     });
   }
   render() {
-      console.log('numberOfStreamersForThisHero', this.props.hero.twitchName, this.state.numberOfStreamersForThisHero);
     return (
       <li key={this.props.hero}>
         <NavLink to={this.props.hero.routeName} activeClassName="is-active" className={this.state.numberOfStreamersForThisHero === 0 ? 'no-streamers' : '' + 'is-hovered'}>{this.props.hero.displayName}</NavLink>
