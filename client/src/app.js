@@ -163,6 +163,7 @@ class TwitchEmbed extends React.Component {
       <div className="container">
         <h1 className="title is-1">{this.props.channel}</h1>
         <ReactTwitchEmbedVideo channel={this.props.channel} width="100%"/>
+        <Options chat="true" autoFollow="true"/>
       </div>
     );
   }
@@ -223,6 +224,32 @@ class App extends React.Component {
           </div>
         </div>
       </BrowserRouter>
+    );
+  }
+}
+
+class Options extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      chat: props.chat,
+      autoFollow: props.autoFollow,
+    };
+  }
+  render() {
+    return (
+      <div className="level">
+        <div className="level-left">
+          <div className="level-item">
+            <input id="autoFollow" type="checkbox" name="autoFollow" className="switch is-success is-medium" defaultChecked={this.state.autoFollow}/>
+            <label for="autoFollow">Auto Follow</label>
+          </div>
+          <div className="level-item">
+            <input id="chat" type="checkbox" name="chat" className="switch is-success is-medium" defaultChecked={this.state.autoFollow}/>
+            <label for="chat">Chat</label>
+          </div>
+        </div>
+      </div>
     );
   }
 }
