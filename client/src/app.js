@@ -98,7 +98,7 @@ const HEROS = [
   {
     twitchName: 'Soldier: 76',
     displayName: 'Soldier: 76',
-    routeName: '/soldier: 76',
+    routeName: '/soldier76',
   },
   {
     twitchName: 'Sombra',
@@ -142,10 +142,13 @@ let twitchEmbed;
 
 // Make both the HeroStream and the NoMetadataError components subscribe to this event
 // NoMetadataError will use it to remove the error
-socket.on('streams', (data, cb) => {
-  streams = data;
-  console.log('data', data);
-});
+function subscribeToStreams(cb) {
+  socket.on('streams', (data, cb) => {
+    streams = data;
+    console.log('data', data);
+    cb(null, streams);
+  });
+}
 
 function subscribeToNoMetadata(cb) {
   socket.on('noMetadata', () => {
@@ -190,23 +193,6 @@ class HeroStream extends React.Component {
     const channelMetadata = _.first(_.get(streams, heroName, []));
     return _.get(channelMetadata, 'login', 'monstercat');
   }
-  updateStream() {
-    const streamersForThisHero = _.map(streams[this.state.heroName], 'login');
-    if (!_.includes(streamersForThisHero, this.state.channel)) {
-      const channel = this.getChannel(this.state.heroName);
-      this.setState({ channel });
-    }
-  }
-  componentDidMount() {
-    // Theres a better way of doing this!
-    // This approach is basically: poll every three seconds against the state that's modified.
-    // We can do better: we can provide a callback function
-    // Look into this once twitch is back up :(
-    this.interval = setInterval(() => this.updateStream(), 3000);
-  }
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
   constructor(props) {
     super(props);
     const channel = this.getChannel(props.heroName);
@@ -214,6 +200,13 @@ class HeroStream extends React.Component {
       heroName: props.heroName,
       channel,
     };
+    subscribeToStreams((err, streams) => {
+      const streamersForThisHero = _.map(streams[this.state.heroName], 'login');
+      if (!_.includes(streamersForThisHero, this.state.channel)) {
+        const channel = this.getChannel(this.state.heroName);
+        this.setState({ channel });
+      }
+    });
   }
   render() {
     return <TwitchEmbed channel={this.state.channel} key={this.state.channel}/>;
@@ -249,7 +242,7 @@ class Options extends React.Component {
       <div className="level">
         <div className="level-left">
           <div className="level-item">
-            <input id="autoFollow" type="checkbox" name="autoFollow" className="switch is-success is-medium" defaultChecked={this.props.autoFollow} disabled/>
+            <input id="autoFollow" type="checkbox" name="autoFollow" className="switch is-success is-medium" defaultChecked={this.props.autoFollow}/>
             <label htmlFor="autoFollow">Auto Follow</label>
           </div>
           <div className="level-item">

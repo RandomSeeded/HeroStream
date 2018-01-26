@@ -5418,7 +5418,7 @@ var HEROS = [{
 }, {
   twitchName: 'Soldier: 76',
   displayName: 'Soldier: 76',
-  routeName: '/soldier: 76'
+  routeName: '/soldier76'
 }, {
   twitchName: 'Sombra',
   displayName: 'Sombra',
@@ -5454,10 +5454,13 @@ var twitchEmbed = void 0;
 
 // Make both the HeroStream and the NoMetadataError components subscribe to this event
 // NoMetadataError will use it to remove the error
-socket.on('streams', function (data, cb) {
-  streams = data;
-  console.log('data', data);
-});
+function subscribeToStreams(cb) {
+  socket.on('streams', function (data, cb) {
+    streams = data;
+    console.log('data', data);
+    cb(null, streams);
+  });
+}
 
 function subscribeToNoMetadata(cb) {
   socket.on('noMetadata', function () {
@@ -5525,33 +5528,6 @@ var HeroStream = function (_React$Component2) {
       var channelMetadata = _.first(_.get(streams, heroName, []));
       return _.get(channelMetadata, 'login', 'monstercat');
     }
-  }, {
-    key: 'updateStream',
-    value: function updateStream() {
-      var streamersForThisHero = _.map(streams[this.state.heroName], 'login');
-      if (!_.includes(streamersForThisHero, this.state.channel)) {
-        var channel = this.getChannel(this.state.heroName);
-        this.setState({ channel: channel });
-      }
-    }
-  }, {
-    key: 'componentDidMount',
-    value: function componentDidMount() {
-      var _this3 = this;
-
-      // Theres a better way of doing this!
-      // This approach is basically: poll every three seconds against the state that's modified.
-      // We can do better: we can provide a callback function
-      // Look into this once twitch is back up :(
-      this.interval = setInterval(function () {
-        return _this3.updateStream();
-      }, 3000);
-    }
-  }, {
-    key: 'componentWillUnmount',
-    value: function componentWillUnmount() {
-      clearInterval(this.interval);
-    }
   }]);
 
   function HeroStream(props) {
@@ -5564,6 +5540,13 @@ var HeroStream = function (_React$Component2) {
       heroName: props.heroName,
       channel: channel
     };
+    subscribeToStreams(function (err, streams) {
+      var streamersForThisHero = _.map(streams[_this2.state.heroName], 'login');
+      if (!_.includes(streamersForThisHero, _this2.state.channel)) {
+        var _channel = _this2.getChannel(_this2.state.heroName);
+        _this2.setState({ channel: _channel });
+      }
+    });
     return _this2;
   }
 
@@ -5644,7 +5627,7 @@ var Options = function (_React$Component4) {
           React.createElement(
             'div',
             { className: 'level-item' },
-            React.createElement('input', { id: 'autoFollow', type: 'checkbox', name: 'autoFollow', className: 'switch is-success is-medium', defaultChecked: this.props.autoFollow, disabled: true }),
+            React.createElement('input', { id: 'autoFollow', type: 'checkbox', name: 'autoFollow', className: 'switch is-success is-medium', defaultChecked: this.props.autoFollow }),
             React.createElement(
               'label',
               { htmlFor: 'autoFollow' },
@@ -5675,15 +5658,15 @@ var NoMetadataError = function (_React$Component5) {
   function NoMetadataError(props) {
     _classCallCheck(this, NoMetadataError);
 
-    var _this6 = _possibleConstructorReturn(this, (NoMetadataError.__proto__ || Object.getPrototypeOf(NoMetadataError)).call(this, props));
+    var _this5 = _possibleConstructorReturn(this, (NoMetadataError.__proto__ || Object.getPrototypeOf(NoMetadataError)).call(this, props));
 
-    _this6.state = {
+    _this5.state = {
       display: false
     };
     subscribeToNoMetadata(function () {
-      return _this6.setState({ display: true });
+      return _this5.setState({ display: true });
     });
-    return _this6;
+    return _this5;
   }
 
   _createClass(NoMetadataError, [{
