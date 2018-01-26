@@ -74,6 +74,7 @@ function getMetadata() {
       firstPage = getStreamsFromBody(body);
       if (_.isEmpty(firstPage)) {
         const error = `${moment()}: Twitch not currently returning any streams with heros :(`;
+        console.log(error);
       }
       const parsedBody = JSON.parse(body);
       const metadataSecondPage = _.merge({}, metadataRequest, {
@@ -103,10 +104,10 @@ function getMetadata() {
         const hero = _.get(stream, 'overwatch.broadcaster.hero.name');
         return hero;
       });
+      const emitting = `${moment()}: emitting ${_.size(streamsWithHeros)}`;
       if (_.isEmpty(streamsByHero)) {
         return io.sockets.emit('noMetadata');
       }
-      const emitting = `${moment()}: emitting ${_.size(streamsByHero)}`;
       console.log(emitting);
       io.sockets.emit('streams', streamsByHero);
     }),
