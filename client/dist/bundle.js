@@ -5505,16 +5505,16 @@ var HeroStream = function (_React$Component) {
 
     var channel = _this.state && !_this.state.autoSwitch && _this.state.channel || getChannel(props.heroName, streamCache);
     _this.state = {
-      heroName: props.heroName,
       channel: channel,
       autoSwitch: true
     };
     subscribeToStreams(function (err, streams) {
       console.log('streams update herostream', streams);
-      var streamersForThisHero = _.map(streams[_this.state.heroName], 'login');
+      var streamersForThisHero = _.map(streams[_this.props.heroName], 'login');
       console.log('streamersForThisHero', streamersForThisHero);
       if (!_.includes(streamersForThisHero, _this.state.channel)) {
-        var _channel = getChannel(_this.state.heroName, streams);
+        // const channel = getChannel(this.state.heroName, streams);
+        var _channel = _this.state && !_this.state.autoSwitch && _this.state.channel || getChannel(_this.props.heroName, streams);
         _this.setState({ channel: _channel });
       }
     });

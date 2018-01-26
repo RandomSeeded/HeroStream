@@ -184,16 +184,16 @@ class HeroStream extends React.Component {
     // StreamCache is TEMP HACK ONLY. This cache should be moved into a parent of the herostream (requires moving the subscribe), and the cache passed as props to this component
     const channel = this.state && !this.state.autoSwitch && this.state.channel || getChannel(props.heroName, streamCache);
     this.state = {
-      heroName: props.heroName,
       channel,
       autoSwitch: true,
     };
     subscribeToStreams((err, streams) => {
       console.log('streams update herostream', streams);
-      const streamersForThisHero = _.map(streams[this.state.heroName], 'login');
+      const streamersForThisHero = _.map(streams[this.props.heroName], 'login');
       console.log('streamersForThisHero', streamersForThisHero);
       if (!_.includes(streamersForThisHero, this.state.channel)) {
-        const channel = getChannel(this.state.heroName, streams);
+        // const channel = getChannel(this.state.heroName, streams);
+        const channel = this.state && !this.state.autoSwitch && this.state.channel || getChannel(this.props.heroName, streams);
         this.setState({ channel });
       }
     });
