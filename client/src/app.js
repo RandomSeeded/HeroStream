@@ -160,7 +160,7 @@ class TwitchEmbed extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      chat: false,
+      chat: true,
       autoFollow: true,
     };
   }
@@ -172,7 +172,7 @@ class TwitchEmbed extends React.Component {
     return (
       <div className="container">
         <h1 className="title is-1">{this.props.channel}</h1>
-        <ReactTwitchEmbedVideo channel={this.props.channel} layout={this.state.chat ? '' : 'video'} width="100%" key={this.props.channel + this.state.chat}/>
+        <ReactTwitchEmbedVideo channel={this.props.channel} layout={this.state.chat ? '' : 'video'} width="100%" height="750" key={this.props.channel + this.state.chat}/>
         <Options 
           chat={this.state.chat}
           handleChatChange={this.handleChatChange.bind(this)}

@@ -5477,7 +5477,7 @@ var TwitchEmbed = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (TwitchEmbed.__proto__ || Object.getPrototypeOf(TwitchEmbed)).call(this, props));
 
     _this.state = {
-      chat: false,
+      chat: true,
       autoFollow: true
     };
     return _this;
@@ -5500,7 +5500,7 @@ var TwitchEmbed = function (_React$Component) {
           { className: 'title is-1' },
           this.props.channel
         ),
-        React.createElement(_ReactTwitchEmbedVideo2.default, { channel: this.props.channel, layout: this.state.chat ? '' : 'video', width: '100%', key: this.props.channel + this.state.chat }),
+        React.createElement(_ReactTwitchEmbedVideo2.default, { channel: this.props.channel, layout: this.state.chat ? '' : 'video', width: '100%', height: '750', key: this.props.channel + this.state.chat }),
         React.createElement(Options, {
           chat: this.state.chat,
           handleChatChange: this.handleChatChange.bind(this),
