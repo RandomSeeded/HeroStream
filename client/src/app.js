@@ -197,7 +197,7 @@ class TwitchEmbed extends React.Component {
   render() {
     return (
       <div className="container">
-       <h1 className="title is-1">{this.props.channel}</h1>
+        <h1 className="title is-1">{this.props.channel}</h1>
         <ReactTwitchEmbedVideo channel={this.props.channel} layout={this.state.chat ? '' : 'video'} width="100%" height="750" key={this.props.channel + this.state.chat}/>
         <Options 
           chat={this.state.chat}
