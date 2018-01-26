@@ -5449,16 +5449,12 @@ var HEROS = [{
   routeName: '/zenyatta'
 }];
 
-var streams = void 0;
-var twitchEmbed = void 0;
-
 // Make both the HeroStream and the NoMetadataError components subscribe to this event
 // NoMetadataError will use it to remove the error
 function subscribeToStreams(cb) {
-  socket.on('streams', function (data, cb) {
-    streams = data;
+  socket.on('streams', function (data) {
     console.log('data', data);
-    cb(null, streams);
+    cb(null, data);
   });
 }
 
@@ -5472,19 +5468,62 @@ function subscribeToNoMetadata(cb) {
 // Answer: if your stream isn't showing your hero anymore.
 // Answer 2: if there's a better stream showing your hero?
 
-var TwitchEmbed = function (_React$Component) {
-  _inherits(TwitchEmbed, _React$Component);
+var hackyThing = 0;
+
+var HeroStream = function (_React$Component) {
+  _inherits(HeroStream, _React$Component);
+
+  _createClass(HeroStream, [{
+    key: 'getChannel',
+    value: function getChannel(heroName, streams) {
+      var channelMetadata = _.first(_.get(streams, heroName, []));
+      return _.get(channelMetadata, 'login', 'monstercat');
+    }
+  }]);
+
+  function HeroStream(props) {
+    _classCallCheck(this, HeroStream);
+
+    var _this = _possibleConstructorReturn(this, (HeroStream.__proto__ || Object.getPrototypeOf(HeroStream)).call(this, props));
+
+    var channel = _this.getChannel(props.heroName);
+    _this.state = {
+      heroName: props.heroName,
+      channel: channel
+    };
+    subscribeToStreams(function (err, streams) {
+      var streamersForThisHero = _.map(streams[_this.state.heroName], 'login');
+      if (!_.includes(streamersForThisHero, _this.state.channel)) {
+        var _channel = _this.getChannel(_this.state.heroName, streams);
+        _this.setState({ channel: _channel });
+      }
+    });
+    return _this;
+  }
+
+  _createClass(HeroStream, [{
+    key: 'render',
+    value: function render() {
+      return React.createElement(TwitchEmbed, { channel: this.state.channel, key: this.state.channel });
+    }
+  }]);
+
+  return HeroStream;
+}(React.Component);
+
+var TwitchEmbed = function (_React$Component2) {
+  _inherits(TwitchEmbed, _React$Component2);
 
   function TwitchEmbed(props) {
     _classCallCheck(this, TwitchEmbed);
 
-    var _this = _possibleConstructorReturn(this, (TwitchEmbed.__proto__ || Object.getPrototypeOf(TwitchEmbed)).call(this, props));
+    var _this2 = _possibleConstructorReturn(this, (TwitchEmbed.__proto__ || Object.getPrototypeOf(TwitchEmbed)).call(this, props));
 
-    _this.state = {
+    _this2.state = {
       chat: true,
       autoFollow: true
     };
-    return _this;
+    return _this2;
   }
 
   _createClass(TwitchEmbed, [{
@@ -5515,49 +5554,6 @@ var TwitchEmbed = function (_React$Component) {
   }]);
 
   return TwitchEmbed;
-}(React.Component);
-
-var hackyThing = 0;
-
-var HeroStream = function (_React$Component2) {
-  _inherits(HeroStream, _React$Component2);
-
-  _createClass(HeroStream, [{
-    key: 'getChannel',
-    value: function getChannel(heroName) {
-      var channelMetadata = _.first(_.get(streams, heroName, []));
-      return _.get(channelMetadata, 'login', 'monstercat');
-    }
-  }]);
-
-  function HeroStream(props) {
-    _classCallCheck(this, HeroStream);
-
-    var _this2 = _possibleConstructorReturn(this, (HeroStream.__proto__ || Object.getPrototypeOf(HeroStream)).call(this, props));
-
-    var channel = _this2.getChannel(props.heroName);
-    _this2.state = {
-      heroName: props.heroName,
-      channel: channel
-    };
-    subscribeToStreams(function (err, streams) {
-      var streamersForThisHero = _.map(streams[_this2.state.heroName], 'login');
-      if (!_.includes(streamersForThisHero, _this2.state.channel)) {
-        var _channel = _this2.getChannel(_this2.state.heroName);
-        _this2.setState({ channel: _channel });
-      }
-    });
-    return _this2;
-  }
-
-  _createClass(HeroStream, [{
-    key: 'render',
-    value: function render() {
-      return React.createElement(TwitchEmbed, { channel: this.state.channel, key: this.state.channel });
-    }
-  }]);
-
-  return HeroStream;
 }(React.Component);
 
 var App = function (_React$Component3) {

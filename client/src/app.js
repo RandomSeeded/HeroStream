@@ -137,16 +137,12 @@ const HEROS = [
   },
 ];
 
-let streams;
-let twitchEmbed;
-
 // Make both the HeroStream and the NoMetadataError components subscribe to this event
 // NoMetadataError will use it to remove the error
 function subscribeToStreams(cb) {
-  socket.on('streams', (data, cb) => {
-    streams = data;
+  socket.on('streams', data => {
     console.log('data', data);
-    cb(null, streams);
+    cb(null, data);
   });
 }
 
@@ -159,6 +155,32 @@ function subscribeToNoMetadata(cb) {
 // Question: when do you want to refresh?
 // Answer: if your stream isn't showing your hero anymore.
 // Answer 2: if there's a better stream showing your hero?
+
+let hackyThing = 0;
+class HeroStream extends React.Component {
+  getChannel(heroName, streams) {
+    const channelMetadata = _.first(_.get(streams, heroName, []));
+    return _.get(channelMetadata, 'login', 'monstercat');
+  }
+  constructor(props) {
+    super(props);
+    const channel = this.getChannel(props.heroName);
+    this.state = {
+      heroName: props.heroName,
+      channel,
+    };
+    subscribeToStreams((err, streams) => {
+      const streamersForThisHero = _.map(streams[this.state.heroName], 'login');
+      if (!_.includes(streamersForThisHero, this.state.channel)) {
+        const channel = this.getChannel(this.state.heroName, streams);
+        this.setState({ channel });
+      }
+    });
+  }
+  render() {
+    return <TwitchEmbed channel={this.state.channel} key={this.state.channel}/>;
+  }
+}
 
 class TwitchEmbed extends React.Component {
   constructor(props) {
@@ -175,7 +197,7 @@ class TwitchEmbed extends React.Component {
   render() {
     return (
       <div className="container">
-        <h1 className="title is-1">{this.props.channel}</h1>
+       <h1 className="title is-1">{this.props.channel}</h1>
         <ReactTwitchEmbedVideo channel={this.props.channel} layout={this.state.chat ? '' : 'video'} width="100%" height="750" key={this.props.channel + this.state.chat}/>
         <Options 
           chat={this.state.chat}
@@ -187,31 +209,6 @@ class TwitchEmbed extends React.Component {
   }
 }
 
-let hackyThing = 0;
-class HeroStream extends React.Component {
-  getChannel(heroName) {
-    const channelMetadata = _.first(_.get(streams, heroName, []));
-    return _.get(channelMetadata, 'login', 'monstercat');
-  }
-  constructor(props) {
-    super(props);
-    const channel = this.getChannel(props.heroName);
-    this.state = {
-      heroName: props.heroName,
-      channel,
-    };
-    subscribeToStreams((err, streams) => {
-      const streamersForThisHero = _.map(streams[this.state.heroName], 'login');
-      if (!_.includes(streamersForThisHero, this.state.channel)) {
-        const channel = this.getChannel(this.state.heroName);
-        this.setState({ channel });
-      }
-    });
-  }
-  render() {
-    return <TwitchEmbed channel={this.state.channel} key={this.state.channel}/>;
-  }
-}
 
 class App extends React.Component {
   render() {
