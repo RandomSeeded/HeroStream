@@ -53,7 +53,7 @@ const usersRequest = {
 };
 
 let streamsByHero;
-function parseMetadata(body) {
+function getStreamsFromBody(body) {
   if (!body) return [];
   const parsedBody = JSON.parse(body);
   const streams = parsedBody.data;
@@ -71,17 +71,19 @@ function getMetadata() {
       request.get(metadataRequest, cb);
     },
     (res, body, cb) => {
-      firstPage = parseMetadata(body);
+      firstPage = getStreamsFromBody(body);
       if (_.isEmpty(firstPage)) {
         const error = `${moment()}: Twitch not currently returning any streams with heros :(`;
       }
+      const parsedBody = JSON.parse(body);
       const metadataSecondPage = _.merge({}, metadataRequest, {
-        qs: { cursor: _.get(body,'cursor') },
+        qs: { after: _.get(parsedBody,'pagination.cursor') },
       });
+      // console.log('metadataSecondPage', metadataSecondPage);
       request.get(metadataSecondPage, cb);
     },
     (res, body, cb) => {
-      const secondPage = parseMetadata(body);
+      const secondPage = getStreamsFromBody(body);
       streamsWithHeros = _.concat(firstPage, secondPage);
       const usersRequestOpts = _.merge({}, usersRequest, {
         qs: {
@@ -104,6 +106,7 @@ function getMetadata() {
       if (_.isEmpty(streamsByHero)) {
         return io.sockets.emit('noMetadata');
       }
+      // console.log('emitting...');
       io.sockets.emit('streams', streamsByHero);
     }),
   ]);

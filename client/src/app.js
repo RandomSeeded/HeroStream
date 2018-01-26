@@ -154,9 +154,12 @@ function subscribeToStreams(cb) {
 }
 
 function getChannel(heroName, streams) {
+  console.log('heroName', heroName);
+  console.log('streams', streams);
   const channelMetadata = _.first(_.get(streams, heroName, []));
-  console.log('channelMetadata', channelMetadata);
-  return _.get(channelMetadata, 'login', 'monstercat');
+  const res = _.get(channelMetadata, 'login', 'monstercat');
+  console.log('switching to', res);
+  return res;
 }
 
 function subscribeToNoMetadata(cb) {
@@ -185,7 +188,9 @@ class HeroStream extends React.Component {
       autoSwitch: true,
     };
     subscribeToStreams((err, streams) => {
+      console.log('streams update herostream', streams);
       const streamersForThisHero = _.map(streams[this.state.heroName], 'login');
+      console.log('streamersForThisHero', streamersForThisHero);
       if (!_.includes(streamersForThisHero, this.state.channel)) {
         const channel = getChannel(this.state.heroName, streams);
         this.setState({ channel });
@@ -193,29 +198,19 @@ class HeroStream extends React.Component {
     });
   }
   render() {
-    return <TwitchEmbed channel={this.state.channel} key={this.state.channel} autoSwitch={this.state.autoSwitch} handleAutoSwitchChange={this.handleAutoSwitchChange.bind(this)}/>;
+    return <TwitchEmbed channel={this.state.channel} key={this.state.channel + this.props.chat} autoSwitch={this.state.autoSwitch} chat={this.props.chat} handleAutoSwitchChange={this.handleAutoSwitchChange.bind(this)} handleChatChange={this.props.handleChatChange}/>;
   }
 }
 
 class TwitchEmbed extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      chat: true,
-    };
-  }
-  handleChatChange(event) {
-    const chat = !this.state.chat;
-    this.setState({ chat });
-  }
   render() {
     return (
       <div className="container">
         <h1 className="title is-1">{this.props.channel}</h1>
-        <ReactTwitchEmbedVideo channel={this.props.channel} layout={this.state.chat ? '' : 'video'} width="100%" height="750" key={this.props.channel + this.state.chat}/>
+        <ReactTwitchEmbedVideo channel={this.props.channel} layout={this.props.chat ? '' : 'video'} width="100%" height="750" key={this.props.channel + this.props.chat}/>
         <Options 
-          chat={this.state.chat}
-          handleChatChange={this.handleChatChange.bind(this)}
+          chat={this.props.chat}
+          handleChatChange={this.props.handleChatChange}
           handleAutoSwitchChange={this.props.handleAutoSwitchChange}
           autoSwitch={this.props.autoSwitch}
         />
@@ -314,6 +309,7 @@ class MenuItem extends React.Component {
       numberOfStreamersForThisHero: -1,
     };
     subscribeToStreams((err, streams) => {
+      console.log('subscribeToStreams menuItem');
       const numberOfStreamersForThisHero = _.size(streams[this.props.hero.twitchName]);
       this.setState({ numberOfStreamersForThisHero });
     });
@@ -321,7 +317,7 @@ class MenuItem extends React.Component {
   render() {
     return (
       <li key={this.props.hero}>
-        <NavLink to={this.props.hero.routeName} activeClassName="is-active" className={this.state.numberOfStreamersForThisHero === 0 ? 'no-streamers' : '' + 'is-hovered'}>{this.props.hero.displayName}</NavLink>
+        <NavLink to={this.props.hero.routeName} activeClassName="is-active" className={this.state.numberOfStreamersForThisHero === 0 ? 'has-text-danger' : '' + 'is-hovered'}>{this.props.hero.displayName}</NavLink>
       </li>
     );
   }
@@ -345,9 +341,19 @@ class Sidebar extends React.Component {
 }
 
 class Routes extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      chat: true,
+    };
+  }
+  handleChatChange(event) {
+    const chat = !this.state.chat;
+    this.setState({ chat });
+  }
   render() {
     const routes = HEROS.map((hero, i) =>
-      <Route path={hero.routeName} key={i} render={()=><HeroStream heroName={hero.twitchName}/>}/>
+      <Route path={hero.routeName} key={i} render={()=><HeroStream heroName={hero.twitchName} chat={this.state.chat} handleChatChange={this.handleChatChange.bind(this)}/>}/>
     );
     return (
       routes
