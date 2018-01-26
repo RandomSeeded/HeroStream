@@ -17,7 +17,7 @@ assert(clientId, 'Error: missing configuration file');
 
 app.use(express.static(path.join(__dirname, '../client')));
 app.get('*', (req, res, next) =>
-  res.sendfile('/index.html', { root: path.join(__dirname, '../client') }));
+  res.sendFile('/index.html', { root: path.join(__dirname, '../client') }));
 
 const OVERWATCH_GAME_ID = 488552;
 const REFRESH_RATE = 15000;
@@ -53,21 +53,37 @@ const usersRequest = {
 };
 
 let streamsByHero;
+function parseMetadata(body) {
+  const parsedBody = JSON.parse(body);
+  const streams = parsedBody.data;
+  return _.filter(streams, stream => {
+    return _.has(stream, 'overwatch.broadcaster.hero.name');
+  });
+}
+
 function getMetadata() {
   let streamsWithHeros;
+  let firstPage;
+  // TODO: verify top 200 wors, convert this into an autoinject :(
   async.waterfall([
     cb => {
       request.get(metadataRequest, cb);
     },
     (res, body, cb) => {
-      const parsedBody = JSON.parse(body);
-      const streams = parsedBody.data;
-      streamsWithHeros = _.filter(streams, stream => {
-        return _.has(stream, 'overwatch.broadcaster.hero.name');
-      });
+      firstPage = parseMetadata(body);
       if (_.isEmpty(streamsWithHeros)) {
-        console.log(`${moment()}: Twitch not currently returning any streams with heros :(`);
+        const error = `${moment()}: Twitch not currently returning any streams with heros :(`;
+        console.log(error);
+        return cb(new Error(error));
       }
+      const metadataSecondPage = _.merge({}, metadataRequest, {
+        qs: { cursor: body.cursor },
+      });
+      request.get(metadataSecondPage, cb);
+    },
+    (res, body, cb) => {
+      const secondPage = parseMetadata(body);
+      streamsWithHeros = _.concat(firstPage, secondPage);
       const usersRequestOpts = _.merge({}, usersRequest, {
         qs: {
           id: _.map(streamsWithHeros, 'user_id'),
