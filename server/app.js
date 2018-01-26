@@ -106,7 +106,8 @@ function getMetadata() {
       if (_.isEmpty(streamsByHero)) {
         return io.sockets.emit('noMetadata');
       }
-      // console.log('emitting...');
+      const emitting = `${moment()}: emitting ${_.size(streamsByHero)}`;
+      console.log(emitting);
       io.sockets.emit('streams', streamsByHero);
     }),
   ]);
