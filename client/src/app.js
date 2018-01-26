@@ -144,11 +144,19 @@ const HEROS = [
 
 // Make both the HeroStream and the NoMetadataError components subscribe to this event
 // NoMetadataError will use it to remove the error
+// StreamCache is TEMP HACK ONLY
+let streamCache;
 function subscribeToStreams(cb) {
   socket.on('streams', data => {
-    console.log('data', data);
+    streamCache = data;
     cb(null, data);
   });
+}
+
+function getChannel(heroName, streams) {
+  const channelMetadata = _.first(_.get(streams, heroName, []));
+  console.log('channelMetadata', channelMetadata);
+  return _.get(channelMetadata, 'login', 'monstercat');
 }
 
 function subscribeToNoMetadata(cb) {
@@ -163,17 +171,14 @@ function subscribeToNoMetadata(cb) {
 
 let hackyThing = 0;
 class HeroStream extends React.Component {
-  getChannel(heroName, streams) {
-    const channelMetadata = _.first(_.get(streams, heroName, []));
-    return _.get(channelMetadata, 'login', 'monstercat');
-  }
   handleAutoSwitchChange(event) {
     const autoSwitch = !this.state.autoSwitch;
     this.setState({ autoSwitch });
   }
   constructor(props) {
     super(props);
-    const channel = this.state && !this.state.autoSwitch && this.state.channel || this.getChannel(props.heroName);
+    // StreamCache is TEMP HACK ONLY. This cache should be moved into a parent of the herostream (requires moving the subscribe), and the cache passed as props to this component
+    const channel = this.state && !this.state.autoSwitch && this.state.channel || getChannel(props.heroName, streamCache);
     this.state = {
       heroName: props.heroName,
       channel,
@@ -182,7 +187,7 @@ class HeroStream extends React.Component {
     subscribeToStreams((err, streams) => {
       const streamersForThisHero = _.map(streams[this.state.heroName], 'login');
       if (!_.includes(streamersForThisHero, this.state.channel)) {
-        const channel = this.getChannel(this.state.heroName, streams);
+        const channel = getChannel(this.state.heroName, streams);
         this.setState({ channel });
       }
     });
@@ -299,14 +304,32 @@ class Navbar extends React.Component {
   }
 }
 
+class MenuItem extends React.Component {
+  // This needs to be done for each individual navlink. Aka we need a wrapping component
+  constructor(props) {
+    super(props);
+    this.state = {
+      numberOfStreamersForThisHero: -1,
+    };
+    subscribeToStreams((err, streams) => {
+      const numberOfStreamersForThisHero = _.size(streams[this.props.hero.twitchName]);
+      this.setState({ numberOfStreamersForThisHero });
+    });
+  }
+  render() {
+      console.log('numberOfStreamersForThisHero', this.props.hero.twitchName, this.state.numberOfStreamersForThisHero);
+    return (
+      <li key={this.props.hero}>
+        <NavLink to={this.props.hero.routeName} activeClassName="is-active" className={this.state.numberOfStreamersForThisHero === 0 ? 'no-streamers' : '' + 'is-hovered'}>{this.props.hero.displayName}</NavLink>
+      </li>
+    );
+  }
+}
+
 class Sidebar extends React.Component {
   render() {
     const links = HEROS.map((hero, i) => 
-      (
-        <li key={i}>
-          <NavLink to={hero.routeName} activeClassName="is-active" className="is-hovered">{hero.displayName}</NavLink>
-        </li>
-      )
+      <MenuItem hero={hero} key={i}/>
     );
     return (
       <div>
