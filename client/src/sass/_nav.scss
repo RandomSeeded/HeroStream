@@ -1,0 +1,50 @@
+.hs-navbar {
+    @include display-flex();
+    @include align-items(stretch);
+    background: $hs-black;
+    color: $hs-white;
+    height: 55px;
+
+    .hs-navbar-logo {
+        @include display-flex();
+        @include align-items(stretch);
+        margin: 0 0 0 25px;
+
+        a {
+            @include align-self(center);
+        }
+
+        img {
+            width: 300px;
+            max-height: 50px;
+        }
+    }
+
+    .hs-navbar-menu {
+        @include display-flex();
+        @include align-items(stretch);
+        flex-grow: 1;
+        flex-shrink: 0;
+
+        .hs-navbar-item {
+            @include display-flex();
+            justify-content: flex-end;
+            margin: 0 0 0 auto;
+            padding: 5px;
+            
+
+            a {
+                @include align-self(center);
+                @include transition(opacity);
+                @include transition-duration(.2s);
+                opacity: 0.7;
+
+                &:hover {
+                    @include transition(opacity);
+                    @include transition-duration(.2s);
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}
