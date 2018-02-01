@@ -206,15 +206,19 @@ class HeroStream extends React.Component {
 class TwitchEmbed extends React.Component {
   render() {
     return (
-      <div className="container">
-        <h1 className="title is-1">{this.props.channel}</h1>
+      <div className="hs-viewport-inner">
+        <div className="hs-viewport-topbar">
+          <h1>{this.props.channel}</h1>
+          <div className="hs-topbar-opts">
+            <Options 
+              chat={this.props.chat}
+              handleChatChange={this.props.handleChatChange}
+              handleAutoSwitchChange={this.props.handleAutoSwitchChange}
+              autoSwitch={this.props.autoSwitch}
+            />
+          </div>
+        </div>
         <ReactTwitchEmbedVideo channel={this.props.channel} layout={this.props.chat ? '' : 'video'} width="100%" height="750" key={this.props.channel + this.props.chat}/>
-        <Options 
-          chat={this.props.chat}
-          handleChatChange={this.props.handleChatChange}
-          handleAutoSwitchChange={this.props.handleAutoSwitchChange}
-          autoSwitch={this.props.autoSwitch}
-        />
       </div>
     );
   }
@@ -225,17 +229,17 @@ class App extends React.Component {
   render() {
     return (
       <BrowserRouter>
-        <div>
-          <div>
+        <div className="hs-window">
+          <div className="hs-nav">
             <Navbar/>
           </div>
-          <div className="columns">
-            <div className="column is-narrow">
-              <aside className="menu">
+          <div className="hs-view">
+            <div className="hs-hero-menu">
+              <aside className="hs-hero-menu-inner">
                 <Sidebar/>
               </aside>
             </div>
-            <div className="column">
+            <div className="hs-viewport">
               <NoMetadataError/>
               <Routes/>
             </div>
@@ -249,7 +253,6 @@ class App extends React.Component {
 class Options extends React.Component {
   render() {
     return (
-      <div className="level">
         <div className="level-left">
           <div className="level-item">
             <input id="autoSwitch" type="checkbox" name="autoSwitch" className="switch is-success is-medium" defaultChecked={this.props.autoSwitch} onChange={this.props.handleAutoSwitchChange}/>
@@ -260,7 +263,6 @@ class Options extends React.Component {
             <label htmlFor="chat">Chat</label>
           </div>
         </div>
-      </div>
     );
   }
 }
@@ -284,15 +286,15 @@ class NoMetadataError extends React.Component {
 class Navbar extends React.Component {
   render() {
     return (
-      <nav className="navbar" role="navigation">
-        <div className="navbar-brand">
-          <a className="navbar-item title is-5" href="/">
-            Overwatch Hero Streamer
+      <nav className="hs-navbar" role="navigation">
+        <div className="hs-navbar-logo">
+          <a className="" href="/">
+            <img src="dist/imgs/hs_logo.svg" />
           </a>
         </div>
-        <div className="navbar-menu">
-          <div className="navbar-end is-grouped">
-            <a className="navbar-item button is-large" href="https://github.com/RandomSeeded/HeroStream">
+        <div className="hs-navbar-menu">
+          <div className="hs-navbar-item">
+            <a href="https://github.com/RandomSeeded/HeroStream">
               <span className="icon is-medium fab fa-github-square fa-inverse"></span>
             </a>
           </div>
@@ -318,7 +320,7 @@ class MenuItem extends React.Component {
   render() {
     return (
       <li key={this.props.hero}>
-        <NavLink to={this.props.hero.routeName} activeClassName="is-active" className={this.state.numberOfStreamersForThisHero === 0 ? 'has-text-danger' : '' + 'is-hovered'}>{this.props.hero.displayName}</NavLink>
+        <NavLink to={this.props.hero.routeName} activeClassName="hs-is-active" className={this.state.numberOfStreamersForThisHero === 0 ? 'has-text-danger' : ''}>{this.props.hero.displayName}</NavLink>
       </li>
     );
   }
@@ -330,13 +332,11 @@ class Sidebar extends React.Component {
       <MenuItem hero={hero} key={i}/>
     );
     return (
-      <div>
-        <nav>
-          <ul className="menu-list">
+        <nav className="hs-hero-nav">
+          <ul className="hs-hero-nav-list">
             {links}
           </ul>
         </nav>
-      </div>
     );
   }
 }
