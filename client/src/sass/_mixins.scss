@@ -1,0 +1,147 @@
+//
+//  _mixins.scss
+//  adam.wtf
+//
+//  Version 1.0
+//  14/05/2015
+//
+//  Created by Adam Shady
+//
+
+// Flex Mixins
+@mixin display-flex()
+{
+	display: -webkit-flex;
+	display: flex;
+}
+
+@mixin flex-direction($val)
+{
+	-webkit-flex-direction: $val;
+	flex-direction: $val;
+}
+
+@mixin align-self($val)
+{
+	-webkit-align-self: $val;
+	align-self: $val;
+}
+
+@mixin align-items($val)
+{
+	-webkit-align-items: $val;
+	align-items: $val;
+}
+
+@mixin flex-wrap($val)
+{
+	-webkit-flex-wrap: $val;
+	flex-wrap: $val;
+}
+
+@mixin order($num)
+{
+	-webkit-order: $num;
+	order: $num;
+}
+
+@mixin flex-grow($val)
+{
+	-webkit-flex-grow: $val;
+	flex-grow: $val;
+}
+
+@mixin flex-shrink($val)
+{
+	-webkit-flex-shrink: $val;
+	flex-shrink: $val;
+}
+
+@mixin flex-basis($val)
+{
+	-webkit-flex-basis: $val;
+	flex-basis: $val;
+}
+
+// Animation Mixins
+@mixin transition($type, $ease:"")
+{
+	-webkit-transition: $type unquote($ease);
+    -moz-transition: $type unquote($ease);
+    -ms-transition: $type unquote($ease);
+    -o-transition: $type unquote($ease);
+    transition: $type unquote($ease);	
+}
+
+@mixin transition-duration($dur)
+{
+	-moz-transition-duration: $dur;
+    -webkit-transition-duration: $dur;
+    -o-transition-duration: $dur;
+    transition-duration: $dur;	
+}
+
+// Border Micins
+@mixin border-radius($tl, $tr, $br, $bl)
+{
+	border-top-left-radius: $tl;
+	border-top-right-radius: $tr;
+	border-bottom-right-radius: $br;
+	border-bottom-left-radius: $bl;
+}
+
+
+// Utility Mixins
+@mixin noselect()
+{
+	-webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+
+@mixin appearance($val)
+{
+	-moz-appearance: $val;
+	-webkit-appearance: $val;
+	appearance: $val;	
+}
+
+
+//Responsiveness - For Now
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == "small" {
+    @media (min-width: 767px) {
+      @content;
+    }
+  }
+
+  @else if $breakpoint == "medium" {
+    @media (min-width: 992px) {
+      @content;
+    }
+  }
+
+  @else if $breakpoint == "large" {
+    @media (min-width: 1200px) {
+      @content;
+    }
+  }
+  
+  @else if $breakpoint == "retina" {
+	  @media
+    only screen and (-webkit-min-device-pixel-ratio: 2),
+    only screen and (   min--moz-device-pixel-ratio: 2),
+    only screen and (     -o-min-device-pixel-ratio: 2/1),
+    only screen and (        min-device-pixel-ratio: 2),
+    only screen and (                min-resolution: 192dpi),
+    only screen and (                min-resolution: 2dppx) { 
+      
+      @content
+
+    }
+  }
+}

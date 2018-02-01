@@ -1,0 +1,106 @@
+.hs-view {
+    @include display-flex();
+    @include flex-direction(row);
+}
+
+.hs-hero-menu {
+    .hs-hero-menu-inner {
+        
+    }
+}
+
+.hs-hero-nav {
+    @include display-flex();
+    @include flex-direction(column);
+
+    .hs-hero-nav-list {
+        background: $hs-white;
+        font-family: $hs-font;
+        text-transform: uppercase;
+        li {
+            padding: 10px 15px;
+            text-align: center;
+
+            a {
+                @include transition(all);
+                @include transition-duration(.2s);
+                color: $hs-black;
+                position: relative;
+                font-weight: 700;
+
+                &:after {
+                    @include transition(all);
+                    @include transition-duration(.2s);
+                    display: block;
+                    content: "";
+                    background: $hs-black;
+                    width: 100%;
+                    height: 2px;
+                    opacity: 0;
+                    transform: translateY(5px);
+                }
+
+                &:hover {
+                    color: $hs-blue;
+                    &:after {
+                        @include transition(all);
+                        @include transition-duration(.2s);
+                        display: block;
+                        content: "";
+                        background: $hs-blue;
+                        width: 100%;
+                        height: 2px;
+                        opacity: 1;
+                        transform: translateY(0px);
+                    }
+                }
+
+                &.hs-is-active {
+                    color: $hs-blue;
+                }
+                
+            }
+        }
+    }
+}
+
+.hs-viewport {
+    width: 100%;
+    padding: 25px;
+    background: $hs-white;
+    .hs-viewport-inner {
+        @include display-flex();
+        @include flex-direction(column);
+
+        .hs-viewport-topbar {
+            @include display-flex();
+            @include flex-direction(row);
+            margin: 0 0 10px 0;
+
+            h1 {
+                font-family: $hs-font;
+                font-weight: 700;
+                font-size: 3rem;
+                // text-transform: uppercase;
+                color: $hs-black;
+
+                &:after {
+                    @include transition(all);
+                    @include transition-duration(.2s);
+                    display: block;
+                    content: "";
+                    background: $hs-orange;
+                    width: 100%;
+                    height: 4px;
+                    transform: translateY(-5px);
+                }
+            }
+
+            .hs-topbar-opts {
+                @include display-flex();
+                justify-content: flex-end;
+                margin: 0 0 0 auto;
+            }
+        }
+    }
+}
