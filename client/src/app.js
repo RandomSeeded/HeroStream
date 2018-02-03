@@ -8,7 +8,7 @@ import { BrowserRouter, NavLink, Route } from 'react-router-dom';
 import ReactTwitchEmbedVideo from "./components/ReactTwitchEmbedVideo"
 
 // const socket = io.connect(window.location.origin, { path: window.location.pathname });
-const socket = io.connect(window.location.href);
+const socket = io.connect();
 
 const HEROS = [
   {
